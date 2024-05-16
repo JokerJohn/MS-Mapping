@@ -20,7 +20,9 @@
 
 ## Introduction
 
-**MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme and flexibly supports various LiDAR-based odometry front-ends, enabling high-precision and consistent map assembly in large-scale environments. ![image-20240516093525041](./README/image-20240516093525041.png)
+**MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme and flexibly supports various LiDAR-based odometry front-ends, enabling high-precision and consistent map assembly in large-scale environments. 
+
+[image-20240516093525041](./README/image-20240516093525041.png)
 </div>
 
 ## News
@@ -40,7 +42,8 @@ Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https:
 ### Map Evaluation
 
 <div align="center">
-​    ![image-20240516093903006](./README/image-20240516093903006.png)
+
+![image-20240516093903006](./README/image-20240516093903006.png)
 </div>
 
 ![image-20240516094035919](./README/image-20240516094035919.png)
@@ -48,14 +51,11 @@ Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https:
 ### Time Analysis
 
 <div align="center">
+
 ![image-20240516093925114](./README/image-20240516093925114.png)
 </div>
 
 To plot the results, you can follow this [scripts](https://github.com/JokerJohn/SLAMTools/blob/main/Run_Time_analysis/time_analysis.py).
-
-## Important Issue
-
-
 
 
 
