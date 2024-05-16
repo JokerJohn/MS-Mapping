@@ -21,6 +21,7 @@
 ## Introduction
 
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme and flexibly supports various LiDAR-based odometry front-ends, enabling high-precision and consistent map assembly in large-scale environments. 
+<div align="center">
 
 [image-20240516093525041](./README/image-20240516093525041.png)
 </div>
