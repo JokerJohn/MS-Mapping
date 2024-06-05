@@ -62,13 +62,15 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 ## Citations
 
-The map evaluation metrics of this work follow [Cloud_Map_Evaluation](https://github.com/JokerJohn/Cloud_Map_Evaluation). Please cite:
+Please cite:
 ```
-@article{jiao2024fp,
-  author    = {Jianhao Jiao and Hexiang Wei and Tianshuai Hu and Xiangcheng Hu and Yilong Zhu and Zhijian He and Jin Wu and Jingwen Yu and Xupeng Xie and Huaiyang Huang and Ruoyu Geng and Lujia Wang and Ming Liu},
-  title     = {FusionPortable: A Multi-Sensor Campus-Scene Dataset for Evaluation of Localization and Mapping Accuracy on Diverse Platforms},
-  booktitle = {2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-  year      = {2022}
+@misc{BibEntry2024Jun,
+	title = {{MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}},
+	journal = {arXiv},
+	year = {2024},
+	month = jun,
+	note = {[Online; accessed 5. Jun. 2024]},
+	url = {https://arxiv.org/html/2406.02096v1}
 }
 ```
 
