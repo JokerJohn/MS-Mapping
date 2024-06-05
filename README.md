@@ -65,13 +65,13 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 Please cite:
 ```
-@misc{BibEntry2024Jun,
-	title = {{MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}},
-	journal = {arXiv},
-	year = {2024},
-	month = jun,
-	note = {[Online; accessed 5. Jun. 2024]},
-	url = {https://arxiv.org/html/2406.02096v1}
+@misc{hu2024msmapping,
+      title={MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}, 
+      author={Xiangcheng Hu and Jin Wu and Jianhao Jiao and Wei Zhang and Ping Tan},
+      year={2024},
+      eprint={2406.02096},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
 }
 ```
 
