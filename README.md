@@ -28,6 +28,7 @@
 
 ## News
 
+- **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 - **2024/05/20**: submit to a journal.
 
 ## Dataset
