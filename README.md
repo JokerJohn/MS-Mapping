@@ -67,7 +67,7 @@ Please cite:
 ```
 @misc{hu2024msmapping,
       title={MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}, 
-      author={Xiangcheng Hu and Jin Wu and Jianhao Jiao and Wei Zhang and Ping Tan},
+      author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Wei Zhang and Ping Tan},
       year={2024},
       eprint={2406.02096},
       archivePrefix={arXiv},
