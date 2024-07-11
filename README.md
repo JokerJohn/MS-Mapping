@@ -2,7 +2,7 @@
 
 # MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System
 
-![image-20240711111224559](./README/image-20240711111224559.png)
+![image-20240711222337533](./README/image-20240711222337533.png)
 
 </div>
 
@@ -21,7 +21,7 @@
 
 ## Introduction
 
-**Author**: Xiangcheng Hu, Jin Wu, Jianhao Jiao, Binqian Jiang, Wei Zhang, Wenshuo Wang and Ping Tan
+**Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
 
@@ -69,8 +69,11 @@
 ![image-20240516093903006](./README/image-20240516093903006.png)
 </div>
 
-![image-20240711111339724](./README/image-20240711111339724.png)
 
+<div align="center">
+
+![image-20240711111339724](./README/image-20240711111339724.png)
+</div>
 
 
 ### Time Analysis
