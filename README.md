@@ -2,8 +2,6 @@
 
 # MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System
 
-![image-20240516093245914](./README/image-20240516093245914.png)
-
 ![image-20240711111224559](./README/image-20240711111224559.png)
 
 </div>
@@ -25,7 +23,7 @@
 
 **Author**: Xiangcheng Hu, Jin Wu, Jianhao Jiao, Binqian Jiang, Wei Zhang, Wenshuo Wang and Ping Tan
 
-**MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme and flexibly supports various LiDAR-based odometry front-ends, enabling high-precision and consistent map assembly in large-scale environments. 
+**MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
 
 <div align="center">
 
@@ -39,19 +37,23 @@
 
 ## Dataset
 
-### [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/)
+#### [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/)
 
-Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2//). 
+#### [Newer College](https://ori-drs.github.io/newer-college-dataset/)
 
-### Self-collected Dataset
+#### [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset)
 
-### Adjustment
+#### [MS-Dataset](https://github.com/JokerJohn/MS-Dataset)
+
+![image-20240516093245914](./README/image-20240516093245914.png)
+
+### Trajectory Evaluation
 
 ![image-20240711111837423](./README/image-20240711111837423.png)
 
 | ![image-20240711111905225](./README/image-20240711111905225.png) | ![image-20240711111922712](./README/image-20240711111922712.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|                                                              |                                                              |
+
 
 
 
@@ -59,7 +61,8 @@ Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https:
 
 | ![image-20240711111417041](./README/image-20240711111417041.png) | ![image-20240711111504116](./README/image-20240711111504116.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|                                                              |                                                              |
+
+
 
 <div align="center">
 
