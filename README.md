@@ -6,7 +6,6 @@
 
 ![image-20240711111224559](./README/image-20240711111224559.png)
 
-
 </div>
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -29,6 +28,7 @@
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme and flexibly supports various LiDAR-based odometry front-ends, enabling high-precision and consistent map assembly in large-scale environments. 
 
 <div align="center">
+
 ![image-20240516093525041](./README/image-20240516093525041.png)
 </div>
 
@@ -62,6 +62,7 @@ Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https:
 |                                                              |                                                              |
 
 <div align="center">
+
 ![image-20240516093903006](./README/image-20240516093903006.png)
 </div>
 
@@ -72,6 +73,7 @@ Our algorithms were rigorously tested on the [Fusion Portable V2 Dataset](https:
 ### Time Analysis
 
 <div align="center">
+
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
