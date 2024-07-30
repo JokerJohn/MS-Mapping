@@ -13,7 +13,6 @@
 [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)
 
 ## Table of Contents
-
 - [Introduction](#introduction)
 - [News](#news)
 - [Dataset](#dataset)
@@ -89,6 +88,7 @@
 ### Time Analysis
 
 <div align="center">
+
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
