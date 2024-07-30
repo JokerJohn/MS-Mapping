@@ -2,7 +2,9 @@
 
 # MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System
 
-![image-20240711222337533](./README/image-20240711222337533.png)
+<div align="center">
+
+![image-20240730152813297](./README/image-20240730152813297.png)
 
 </div>
 
@@ -26,12 +28,16 @@
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
 
 <div align="center">
-
-![image-20240516093525041](./README/image-20240516093525041.png)
 </div>
+
+| ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+
+
 
 ## News
 
+- **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 - **2024/05/20**: submit to a journal.
 
@@ -45,13 +51,15 @@
 
 #### [MS-Dataset](https://github.com/JokerJohn/MS-Dataset)
 
-![image-20240516093245914](./README/image-20240516093245914.png)
+![image-20240730151834570](./README/image-20240730151834570.png)
+
+
 
 ### Trajectory Evaluation
 
 ![image-20240711111837423](./README/image-20240711111837423.png)
 
-| ![image-20240711111905225](./README/image-20240711111905225.png) | ![image-20240711111922712](./README/image-20240711111922712.png) |
+| ![image-20240730153021873](./README/image-20240730153021873.png) | ![image-20240730153037085](./README/image-20240730153037085.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 
@@ -66,20 +74,21 @@
 
 <div align="center">
 
-![image-20240516093903006](./README/image-20240516093903006.png)
+
+![image-20240730152951528](./README/image-20240730152951528.png)
+
 </div>
 
 
 <div align="center">
 
-![image-20240711111339724](./README/image-20240711111339724.png)
-</div>
+![image-20240730152904480](./README/image-20240730152904480.png)
 
+</div>
 
 ### Time Analysis
 
 <div align="center">
-
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
