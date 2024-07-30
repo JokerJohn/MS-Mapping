@@ -27,18 +27,18 @@
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
 
 <div align="center">
-</div>
 
 | ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
+</div>
 
 
 ## News
 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
-- **2024/05/20**: submit to a journal.
+
 
 ## Dataset
 
