@@ -3,6 +3,7 @@
 # MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System
 
 <div align="center">
+
 ![image (16)](./README/image%20(16).png)
 
 ![cp5-gn-100](./README/cp5-gn-100.gif)
