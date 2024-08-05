@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![image-20240730152813297](./README/image-20240730152813297.png)
+![cp5-gn-100](./README/cp5-gn-100.gif)
 
 </div>
 
@@ -25,6 +25,8 @@
 **Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 
 **MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
+
+![image-20240730152813297](./README/image-20240730152813297.png)
 
 <div align="center">
 
