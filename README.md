@@ -57,9 +57,6 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
   ![image-20240807094808981](./README/image-20240807094808981.png)
 
-  
-
-  
 
 - Run the Ms-Mapping and save the merged data. The keyframe folder  only save the keyframes of the new session data.
 
@@ -75,7 +72,7 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
 ![image-20240807101845991](./README/image-20240807101845991.png)
 
-
+![image-20240807110418976](./README/image-20240807110418976.png)
 
 - set the new base map `CP5-CP2` for the next mapping round. You need to add the keyframes of `CP5` into this folder. There must be a `map.pcd ` file in the map folder. Check the keyframes number with the pose files.
 
