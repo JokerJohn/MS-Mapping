@@ -17,7 +17,7 @@
 - [Introduction](#introduction)
 - [News](#news)
 - [Run](#Run)
-- [Example Results](# Example Data)
+- [Example Results](#Example Data)
 - [Dataset](#dataset)
 - [Results](#results)
 - [Citations](#citations)
@@ -34,7 +34,7 @@ Large-scale multi-session LiDAR mapping is essential for a wide range of applica
    
 3. To ensure fair evaluation, we redesign **baseline comparisons and the evaluation benchmark**. Direct assessment of map accuracy demonstrates the superiority of the proposed MS-Mapping algorithm compared to state-of-the-art methods.
 
-In addition to employing public datasets such as Urban-Nav, FusionPortable, and Newer College, we conducted extensive experiments on such a large 855m * 636m ground truth map, collecting over 20km of indoor and outdoor data across more than ten sequences. These comprehensive experiments highlight the robustness and accuracy of our approach. To facilitate further research and development in the community, we  would make our code  and [datasets](https://github.com/JokerJohn/MS-Dataset)  publicly available.
+In addition to employing public datasets such as Urban-Nav, FusionPortable, and Newer College, we conducted extensive experiments on such a large 855m x 636m ground truth map, collecting over 20km of indoor and outdoor data across more than ten sequences. These comprehensive experiments highlight the robustness and accuracy of our approach. To facilitate further research and development in the community, we  would make our code  and [datasets](https://github.com/JokerJohn/MS-Dataset)  publicly available.
 
 ![image-20240730152813297](./README/image-20240730152813297.png)
 
@@ -157,6 +157,7 @@ pcl_viewer merged_map_session_*
 ### Time Analysis
 
 <div align="center">
+
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
