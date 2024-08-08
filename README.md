@@ -14,14 +14,14 @@
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [News](#news)
-- [Run](#Run)
-- [Example Results](#Example Data)
-- [Dataset](#dataset)
-- [Results](#results)
-- [Citations](#citations)
-- [License](#license)
+ [Introduction](#introduction)
+ [News](#news)
+ [Run](#Run)
+ [Example Results](#Example)
+ [Dataset](#dataset)
+ [Results](#results)
+ [Citations](#citations)
+ [License](#license)
 
 ## Introduction
 
@@ -88,7 +88,7 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
   ![image-20240807100001179](./README/image-20240807100001179.png)
 
-## Example Data
+## Example
 
 We provide example merged data for 8 sessions [here](http://gofile.me/4jm56/xNhE1scBX), The session order is: ` CP5-CP2-CS1-CC1-PK1-IA3-IA4-NG`. **One must clean the separate map to remove the point cloud noise caused by the glass**, since this study do not focus on this.  The cleaned map also can be [download here](http://gofile.me/4jm56/Lzz6aVUNJ). Note that these example data may be updated since it is not the best results.
 
