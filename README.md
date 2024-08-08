@@ -10,16 +10,13 @@
 <br>
 &dagger;project lead&emsp;*corresponding author
 
-![image (16)](./README/image%20(16).png)
-
-![cp5-gn-100](./README/cp5-gn-100.gif)
-
 <a href="https://arxiv.org/pdf/2408.03723"><img src='https://img.shields.io/badge/arXiv-MS Mapping-red' alt='Paper PDF'></a>[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
 
 </div>
 
 ## Introduction
 
+<div align="center">
 
 MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
 
@@ -29,13 +26,11 @@ MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scal
 
 Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
 
+![image (16)](./README/image%20(16).png)
+
+![cp5-gn-100](./README/cp5-gn-100.gif)
+
 ![image-20240730152813297](./README/image-20240730152813297.png)
-
-<div align="center">
-
-| ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-
 </div>
 
 ## News
@@ -109,6 +104,10 @@ pcl_viewer merged_map_session_*
 
 #### [Newer College](https://ori-drs.github.io/newer-college-dataset/)
 
+| ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+
+
 #### [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset)
 
 #### [MS-Dataset](https://github.com/JokerJohn/MS-Dataset)
@@ -152,7 +151,7 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 ## Citations
 
 Please cite:
-```latex
+```bibtex
 @misc{hu2024msmapping,
       title={MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}, 
       author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Wei Zhang and Ping Tan},
@@ -185,7 +184,6 @@ The code in this project is adapted from the following projects:
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
 </a>
-
 
 ## License
 
