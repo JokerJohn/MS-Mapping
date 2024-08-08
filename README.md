@@ -24,9 +24,10 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 ![image (16)](./README/image%20(16).png)
 
-|                 CP5-NG                 |                       CP5-NG-PK1                       |
-| :------------------------------------: | :----------------------------------------------------: |
-| ![cp5-gn-100](./README/cp5-gn-100.gif) | ![cp5-ga-pk1](./README/cp5-ga-pk1-1723097472019-4.gif) |
+|                            CP5-NG                            |                          CP5-NG-PK1                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|            ![cp5-gn-100](./README/cp5-gn-100.gif)            |    ![cp5-ga-pk1](./README/cp5-ga-pk1-1723097472019-4.gif)    |
+| ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
 
 ![image-20240730152813297](./README/image-20240730152813297.png)
 </div>
@@ -101,9 +102,6 @@ pcl_viewer merged_map_session_*
 #### [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/)
 
 #### [Newer College](https://ori-drs.github.io/newer-college-dataset/)
-
-| ![image-20240516093525041](./README/image-20240516093525041.png) | ![image-20240730151727768](./README/image-20240730151727768.png) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 
 #### [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset)
