@@ -63,9 +63,10 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
 ![image-20240807101620547](./README/image-20240807101620547.png)
 
-![image-20240807101845991](./README/image-20240807101845991.png)
+| ![image-20240807101845991](./README/image-20240807101845991.png) | ![image-20240807110418976](./README/image-20240807110418976.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 
-![image-20240807110418976](./README/image-20240807110418976.png)
+
 
 - set the new base map `CP5-CP2` for the next mapping round. You need to add the keyframes of `CP5` into this folder. There must be a `map.pcd ` file in the map folder. Check the keyframes number with the pose files.
 
@@ -89,9 +90,10 @@ python3 tum-trajectory-plotter.py
 pcl_viewer merged_map_session_*
 ```
 
-![image-20240808090003879](./README/image-20240808090003879.png)
+| ![image-20240808090003879](./README/image-20240808090003879.png) | ![image-20240808090223073](./README/image-20240808090223073.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 
-![image-20240808090223073](./README/image-20240808090223073.png)
+
 
 ## Dataset
 
