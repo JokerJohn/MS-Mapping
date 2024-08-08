@@ -2,23 +2,16 @@
 
 # [MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System](https://arxiv.org/abs/2408.03723)
 
-<div align="center">
-
 ![image (16)](./README/image%20(16).png)
 
 ![cp5-gn-100](./README/cp5-gn-100.gif)
 
+<a href="https://arxiv.org/pdf/2408.03723"><img src='https://img.shields.io/badge/arXiv-MS Mapping-red' alt='Paper PDF'></a>[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+
 </div>
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
-
-## Table of Contents
-
-[TOC]
 
 ## Introduction
 
-**Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 
 MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
 
@@ -36,8 +29,6 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 </div>
-
-
 
 ## News
 
@@ -127,20 +118,13 @@ pcl_viewer merged_map_session_*
 
 ### Map Evaluation
 
+<div align="center">
+
 | ![image-20240711111417041](./README/image-20240711111417041.png) | ![image-20240711111504116](./README/image-20240711111504116.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
-
-
-<div align="center">
-
-
 ![image-20240730152951528](./README/image-20240730152951528.png)
 
-</div>
-
-
-<div align="center">
 
 ![image-20240730152904480](./README/image-20240730152904480.png)
 
@@ -151,10 +135,9 @@ pcl_viewer merged_map_session_*
 <div align="center">
 
 ![image-20240711111322055](./README/image-20240711111322055.png)
-</div>
 
 To plot the results, you can follow this [scripts](https://github.com/JokerJohn/SLAMTools/blob/main/Run_Time_analysis/time_analysis.py).
-
+</div>
 
 ## Citations
 
@@ -189,10 +172,11 @@ The code in this project is adapted from the following projects:
 - The Point-to-Plane method is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## Contributors
-
+**Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
 </a>
+
 
 ## License
 
