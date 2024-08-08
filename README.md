@@ -103,14 +103,11 @@ pcl_viewer merged_map_session_*
 
 #### [Newer College](https://ori-drs.github.io/newer-college-dataset/)
 
-
 #### [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset)
 
 #### [MS-Dataset](https://github.com/JokerJohn/MS-Dataset)
 
 ![image-20240730151834570](./README/image-20240730151834570.png)
-
-
 
 ### Trajectory Evaluation
 
