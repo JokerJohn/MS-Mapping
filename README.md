@@ -101,7 +101,7 @@ We provide example merged data for 8 sessions [here](http://gofile.me/4jm56/xNhE
 
 ![image-20240808085750123](./README/image-20240808085750123.png)
 
-Plot the results:
+[Plot the results](https://github.com/JokerJohn/SLAMTools/tree/main/Ms_mapping):
 
 ```python
 #trjectory
