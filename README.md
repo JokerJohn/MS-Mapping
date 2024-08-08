@@ -54,7 +54,7 @@ Large-scale multi-session LiDAR mapping is essential for a wide range of applica
 
 ## News
 
-- **2024/08/08**: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/VmmRc0sWZ)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili]() videos. 
+- **2024/08/08**: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/oO3TvgSvl)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili]() videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 
@@ -95,7 +95,7 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
 ## Example
 
-We provide example merged data for 8 sessions [here](http://gofile.me/4jm56/xNhE1scBX), The session order is: ` CP5-CP2-CS1-CC1-PK1-IA3-IA4-NG`. **One must clean the separate map to remove the point cloud noise caused by the glass**, since this study do not focus on this.  The cleaned map also can be [download here](http://gofile.me/4jm56/Lzz6aVUNJ). Note that these example data may be updated since it is not the best results.
+We provide example merged data for 8 sessions [here](http://gofile.me/4jm56/xNhE1scBX), The session order is: ` CP5-CP2-CS1-CC1-PK1-IA3-IA4-NG`. **One must clean the separate map to remove the point cloud noise caused by the glass**, since this study do not focus on this.  The cleaned map also can be [download here](http://gofile.me/4jm56/jyhJf373SJ). Note that these example data may be updated since it is not the best results.
 
 ![image-20240808085525833](./README/image-20240808085525833.png)
 
