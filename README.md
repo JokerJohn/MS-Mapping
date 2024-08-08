@@ -49,7 +49,7 @@ In addition to employing public datasets such as Urban-Nav, FusionPortable, and 
 
 ## News
 
-- ***2024/08/08***: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/GqIgIBjBH)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili]() videos. 
+- **2024/08/08**: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/GqIgIBjBH)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili]() videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 
@@ -157,7 +157,6 @@ pcl_viewer merged_map_session_*
 ### Time Analysis
 
 <div align="center">
-
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
