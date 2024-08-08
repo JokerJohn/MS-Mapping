@@ -79,7 +79,7 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 
 ![image-20240807095347540](./README/image-20240807095347540.png)
 
-- Use the [python scripts](https://github.com/JokerJohn/SLAMTools/tree/main/PCD) to get and visulize all the session trajectory and session map, together with the merged map.
+- Use the [python scripts](https://github.com/JokerJohn/SLAMTools/tree/main/Ms_mapping) to get and visualize all the session trajectory and session map, together with the merged map.
 
 ![image-20240807101744799](./README/image-20240807101744799.png)
 
