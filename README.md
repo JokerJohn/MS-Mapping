@@ -12,23 +12,21 @@
 
 <a href="https://arxiv.org/pdf/2408.03723"><img src='https://img.shields.io/badge/arXiv-MS Mapping-red' alt='Paper PDF'></a>[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
 
-</div>
-
-## Introduction
-
-<div align="center">
-
 MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
-
 - **Distribution-aware keyframe selection**: Captures the contributions of each point cloud frame by analyzing map distribution similarities. This reduces data redundancy and optimizes graph size and speed.
 - **Uncertainty model**: Automatically adjusts using the covariance matrix during graph optimization, enhancing precision and robustness without scene-specific tuning. It monitors pose uncertainty to avoid ill-posed optimizations.
 - **Enhanced evaluation**: Redesigned baseline comparisons and benchmarks demonstrate MS-Mapping's superior accuracy over state-of-the-art methods.
-
 Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
+
+</div>
+
+<div align="center">
 
 ![image (16)](./README/image%20(16).png)
 
-![cp5-gn-100](./README/cp5-gn-100.gif)
+|                 CP5-NG                 |                       CP5-NG-PK1                       |
+| :------------------------------------: | :----------------------------------------------------: |
+| ![cp5-gn-100](./README/cp5-gn-100.gif) | ![cp5-ga-pk1](./README/cp5-ga-pk1-1723097472019-4.gif) |
 
 ![image-20240730152813297](./README/image-20240730152813297.png)
 </div>
@@ -178,7 +176,7 @@ The code in this project is adapted from the following projects:
 
 - The odometry  method is adapted from [FAST-LIO2](https://github.com/hku-mars/FAST_LIO).
 - The basic framework for pose graph optimization (PGO) is adapted from [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM).
-- The Point-to-Plane method is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
+- The Point-to-Plane registration is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## Contributors
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
