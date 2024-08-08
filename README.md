@@ -188,7 +188,7 @@ Please cite:
 ```latex
 @misc{hu2024msmappinguncertaintyawarelargescalemultisession,
       title={MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System}, 
-      author={Xiangcheng Hu and Jin Wu and Jianhao Jiao and Binqian Jiang and Wei Zhang and Wenshuo Wang and Ping Tan},
+      author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Binqian Jiang, Wei Zhang, Wenshuo Wang and Ping Tan},
       year={2024},
       eprint={2408.03723},
       archivePrefix={arXiv},
