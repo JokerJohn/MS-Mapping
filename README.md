@@ -15,12 +15,19 @@
 ## Table of Contents
 
  [Introduction](#introduction)
+
  [News](#news)
+
  [Run](#Run)
- [Example Results](#Example)
+
+ [Example](#Example)
+
  [Dataset](#dataset)
+
  [Results](#results)
+
  [Citations](#citations)
+
  [License](#license)
 
 ## Introduction
