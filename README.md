@@ -155,7 +155,6 @@ pcl_viewer merged_map_session_*
 To plot the results, you can follow this [scripts](https://github.com/JokerJohn/SLAMTools/blob/main/Run_Time_analysis/time_analysis.py).
 
 
-
 ## Citations
 
 Please cite:
