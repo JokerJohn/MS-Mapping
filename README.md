@@ -34,12 +34,13 @@
 
 **Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 
-Large-scale multi-session LiDAR mapping is essential for a wide range of applications, including surveying, autonomous driving, crowdsourced mapping, and multi-agent navigation. However, existing approaches often struggle with data redundancy, robustness, and accuracy in complex environments. To address these challenges, we present **MS-Mapping**, an novel multi-session LiDAR mapping system that employs an incremental mapping scheme for robust and accurate map assembly in large-scale environments. Our approach introduces three key innovations:
-1. **A distribution-aware keyframe selection method** that captures the subtle contributions of each point cloud frame to the map by analyzing the similarity of map distributions. This method effectively reduces data redundancy and pose graph size, while enhancing graph optimization speed;
+MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
 
-2. **An uncertainty model** that automatically performs least-squares adjustments according to the covariance matrix during graph optimization, improving mapping precision, robustness, and flexibility without the need for scene-specific parameter tuning. This uncertainty model enables our system to monitor pose uncertainty and avoid ill-posed optimizations, thereby increasing adaptability to diverse and challenging environments.
-   
-3. To ensure fair evaluation, we redesign **baseline comparisons and the evaluation benchmark**. Direct assessment of map accuracy demonstrates the superiority of the proposed MS-Mapping algorithm compared to state-of-the-art methods.
+1. **Distribution-aware keyframe selection**: Captures the contributions of each point cloud frame by analyzing map distribution similarities. This reduces data redundancy and optimizes graph size and speed.
+2. **Uncertainty model**: Automatically adjusts using the covariance matrix during graph optimization, enhancing precision and robustness without scene-specific tuning. It monitors pose uncertainty to avoid ill-posed optimizations.
+3. **Enhanced evaluation**: Redesigned baseline comparisons and benchmarks demonstrate MS-Mapping's superior accuracy over state-of-the-art methods.
+
+Applications include surveying, autonomous driving, crowdsourced mapping, and multi-agent navigation.
 
 ![image-20240730152813297](./README/image-20240730152813297.png)
 
@@ -162,7 +163,6 @@ pcl_viewer merged_map_session_*
 ### Time Analysis
 
 <div align="center">
-
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
@@ -195,6 +195,14 @@ Please cite:
       url={https://arxiv.org/abs/2408.03723}, 
 }
 ```
+
+## Acknowledgment
+
+The code in this project is adapted from the following projects:
+
+- The odometry  method is adapted from [FAST-LIO2](https://github.com/hku-mars/FAST_LIO).
+- The basic framework for pose graph optimization (PGO) is adapted from [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM).
+- The Point-to-Plane method is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## License
 
