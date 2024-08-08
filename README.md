@@ -34,7 +34,7 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 ## News
 
-- **2024/08/08**: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/oO3TvgSvl)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili]() videos. 
+- **2024/08/08**: We released the first version of MS-Mapping on [arXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/4EUwIMPff)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.337.search-card.all.click) videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 
