@@ -1,6 +1,6 @@
 <div id="top" align="center">
 
-# MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System
+# [MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System](https://arxiv.org/abs/2408.03723)
 
 <div align="center">
 
@@ -10,14 +10,14 @@
 
 </div>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [News](#news)
-- [RUN](#Run)
+- [Run](#Run)
+- [Example Results](# Example Data)
 - [Dataset](#dataset)
 - [Results](#results)
 - [Citations](#citations)
@@ -27,7 +27,14 @@
 
 **Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 
-**MS-Mapping** presents a novel multi-session LiDAR mapping system that employs an incremental mapping scheme, enabling high-precision and consistent map assembly in large-scale environments. 
+Large-scale multi-session LiDAR mapping is essential for a wide range of applications, including surveying, autonomous driving, crowdsourced mapping, and multi-agent navigation. However, existing approaches often struggle with data redundancy, robustness, and accuracy in complex environments. To address these challenges, we present **MS-Mapping**, an novel multi-session LiDAR mapping system that employs an incremental mapping scheme for robust and accurate map assembly in large-scale environments. Our approach introduces three key innovations:
+1. **A distribution-aware keyframe selection method** that captures the subtle contributions of each point cloud frame to the map by analyzing the similarity of map distributions. This method effectively reduces data redundancy and pose graph size, while enhancing graph optimization speed;
+
+2. **An uncertainty model** that automatically performs least-squares adjustments according to the covariance matrix during graph optimization, improving mapping precision, robustness, and flexibility without the need for scene-specific parameter tuning. This uncertainty model enables our system to monitor pose uncertainty and avoid ill-posed optimizations, thereby increasing adaptability to diverse and challenging environments.
+   
+3. To ensure fair evaluation, we redesign **baseline comparisons and the evaluation benchmark**. Direct assessment of map accuracy demonstrates the superiority of the proposed MS-Mapping algorithm compared to state-of-the-art methods.
+
+In addition to employing public datasets such as Urban-Nav, FusionPortable, and Newer College, we conducted extensive experiments on such a large 855m * 636m ground truth map, collecting over 20km of indoor and outdoor data across more than ten sequences. These comprehensive experiments highlight the robustness and accuracy of our approach. To facilitate further research and development in the community, we  would make our code  and [datasets](https://github.com/JokerJohn/MS-Dataset)  publicly available.
 
 ![image-20240730152813297](./README/image-20240730152813297.png)
 
@@ -37,6 +44,8 @@
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 </div>
+
+
 
 ## News
 
@@ -77,6 +86,28 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 - set the new base map `CP5-CP2` for the next mapping round. You need to add the keyframes of `CP5` into this folder. There must be a `map.pcd ` file in the map folder. Check the keyframes number with the pose files.
 
   ![image-20240807100001179](./README/image-20240807100001179.png)
+
+## Example Data
+
+We provide example merged data for 8 sessions [here](http://gofile.me/4jm56/GWq6DUUDP), The session order is: ` CP5-CP2-CS1-CC1-PK1-IA3-IA4-NG`. **One must clean the separate map to remove the point cloud noise caused by the glass**, since this study do not focus on this.  The cleaned map also can be [download here](http://gofile.me/4jm56/gSMwGTgSE). Note that these example data may be updated since it is not the best results.
+
+![image-20240808085525833](./README/image-20240808085525833.png)
+
+![image-20240808085750123](./README/image-20240808085750123.png)
+
+Plot the results:
+
+```python
+#trjectory
+python3 tum-trajectory-plotter.py 
+
+#map
+pcl_viewer merged_map_session_*
+```
+
+![image-20240808090003879](./README/image-20240808090003879.png)
+
+![image-20240808090223073](./README/image-20240808090223073.png)
 
 ## Dataset
 
@@ -125,7 +156,6 @@ Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base
 ### Time Analysis
 
 <div align="center">
-
 ![image-20240711111322055](./README/image-20240711111322055.png)
 </div>
 
@@ -136,7 +166,7 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 ## Citations
 
 Please cite:
-```
+```latex
 @misc{hu2024msmapping,
       title={MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}, 
       author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Wei Zhang and Ping Tan},
@@ -144,6 +174,18 @@ Please cite:
       eprint={2406.02096},
       archivePrefix={arXiv},
       primaryClass={cs.RO}
+}
+```
+
+```latex
+@misc{hu2024msmappinguncertaintyawarelargescalemultisession,
+      title={MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System}, 
+      author={Xiangcheng Hu and Jin Wu and Jianhao Jiao and Binqian Jiang and Wei Zhang and Wenshuo Wang and Ping Tan},
+      year={2024},
+      eprint={2408.03723},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2408.03723}, 
 }
 ```
 
