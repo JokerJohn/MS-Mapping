@@ -1,6 +1,14 @@
-<div id="top" align="center">
+<div align="center">
 
-# [MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System](https://arxiv.org/abs/2408.03723)
+<h1>MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System</h1>
+
+[**Xiangcheng Hu**](https://github.com/JokerJohn)<sup>1</sup> · [**Jin Wu**](https://zarathustr.github.io/)<sup>1</sup> · [**Jianhao Jiao**](https://gogojjh.github.io/)<sup>2</sup>
+<br>
+[**Binqian Jiang**](https://github.com/lewisjiang) <sup>1</sup>· [**Wei Zhang**](https://ece.hkust.edu.hk/eeweiz)<sup>1</sup> · [**Wenshuo Wang**](https://wenshuowang.github.io/)<sup>3</sup> · [**Ping Tan**](https://facultyprofiles.hkust.edu.hk/profiles.php?profile=ping-tan-pingtan#publications)<sup>1*&dagger;</sup>
+
+<sup>1</sup>HKUST&emsp;&emsp;&emsp;<sup>2</sup>UCL&emsp;&emsp;&emsp;<sup>3</sup>BIT  
+<br>
+&dagger;project lead&emsp;*corresponding author
 
 ![image (16)](./README/image%20(16).png)
 
@@ -174,7 +182,6 @@ The code in this project is adapted from the following projects:
 - The Point-to-Plane method is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## Contributors
-**Author**: Xiangcheng Hu, [Jin Wu](https://github.com/zarathustr), [Jianhao Jiao](https://github.com/gogojjh), [Binqian Jiang](https://github.com/lewisjiang), Wei Zhang, [Wenshuo Wang](https://github.com/wenshuowang) and Ping Tan
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
 </a>
