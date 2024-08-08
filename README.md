@@ -1,5 +1,4 @@
 <div id="top" align="center">
-
 # [MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System](https://arxiv.org/abs/2408.03723)
 
 <div align="center">
@@ -10,25 +9,11 @@
 
 </div>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
 
 ## Table of Contents
 
- [Introduction](#introduction)
-
- [News](#news)
-
- [Run](#Run)
-
- [Example](#Example)
-
- [Dataset](#dataset)
-
- [Results](#results)
-
- [Citations](#citations)
-
- [License](#license)
+[TOC]
 
 ## Introduction
 
@@ -203,6 +188,13 @@ The code in this project is adapted from the following projects:
 - The basic framework for pose graph optimization (PGO) is adapted from [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM).
 - The Point-to-Plane method is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
+## Contributors
+
+<a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
+</a>
+
 ## License
 
 This project's code is available under the [MIT LICENSE](./LICENSE).
+
