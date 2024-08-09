@@ -177,6 +177,7 @@ The code in this project is adapted from the following projects:
 - The Point-to-Plane registration is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## Contributors
+
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
 </a>
