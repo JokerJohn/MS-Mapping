@@ -54,7 +54,7 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
    | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
    | ![image (17)](./README/image%20(17).png)                     | ![image-20250116000038243](./README/image-20250116000038243.png) | ![image-20250223170438039](./README/image-20250223170438039.png) |
 
-2. set important parameters of file path: `save_directorysave_directory`, `map_directory`,`bag_path`.
+2. set important parameters of file path: `save_directory`, `map_directory`,`bag_path`.
 
    ```launch
    <param name="save_directory" type="string" value="/home/xchu/data/pose_slam_prior_result/"/>
@@ -64,7 +64,7 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
    <arg name="bag_path" default="/media/xchu/新加卷/HKUSTGZ-DATASET/2023-10-28-19-09-04-Parkinglot-RedBird02/Parkinglot-RedBird-2023-10-28-19-09-04.bag"/>
    ```
 
-2. run launch file
+2. run launch file, blue trajectoty for the old session and red for the new session.
 
 ```
 roslaunch ms_mapping ms.launch
@@ -72,7 +72,7 @@ roslaunch ms_mapping ms.launch
 
 ![image-20250223171929118](./README/image-20250223171929118.png)
 
-only save data for the new session part, finally use the python scripts to get the merged map for analysis.
+only save data for the new session part, finally use the [python scripts](https://github.com/JokerJohn/SLAMTools/tree/main/Ms_mapping) to get the merged map for analysis.
 
 ```
 rosservice call /save_map
