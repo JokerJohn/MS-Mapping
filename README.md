@@ -80,7 +80,7 @@ rosservice call /save_map
 
 ![image-20250223172305661](./README/image-20250223172305661.png)
 
-### Demo Results
+### 8 Sessions Demo Results
 
 Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base on it.
 
