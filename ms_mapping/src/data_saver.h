@@ -2,54 +2,11 @@
 #ifndef FAST_LIO_SRC_PGO_SRC_DATASAVER_H_
 #define FAST_LIO_SRC_PGO_SRC_DATASAVER_H_
 
-#include <nav_msgs/Odometry.h>
-#include <pcl/common/common.h>
-#include <pcl/common/transforms.h>
-#include <pcl/filters/crop_box.h>
-#include <pcl/filters/filter.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/range_image/range_image.h>
-#include <pcl/registration/icp.h>
-#include <pcl_conversions/pcl_conversions.h>
-#include <rosbag/bag.h>
-#include <sensor_msgs/PointCloud2.h>
-
-#include <fstream>
-#include <iostream>
-#include <pcl/search/impl/search.hpp>
-
-// save kml files
-#include <gtsam/inference/Symbol.h>
-#include <gtsam/nonlinear/ISAM2.h>
-#include <gtsam/nonlinear/NonlinearFactorGraph.h>
-#include <gtsam/slam/dataset.h>
-#include <gtsam/linear/HessianFactor.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#include <libxml/xmlmemory.h>
-#include <libxml/xmlstring.h>
-#include <libxml/xpath.h>
-
-#include <memory>
-
-// i want to include the xx to support unordered_set
-#include <unordered_set>
 #include "base_type.hpp"
 #include "tic_toc.h"
 
-
 using namespace std;
 using namespace gtsam;
-using symbol_shorthand::B; // Bias  (ax,ay,az,gx,gy,gz)
-using symbol_shorthand::G; // GPS pose
-using symbol_shorthand::V; // Vel   (xdot,ydot,zdot)
-using symbol_shorthand::X; // Pose3 (x,y,z,r,p,y)
-
-using PointT = pcl::PointXYZI;
 
 class DataSaver
 {

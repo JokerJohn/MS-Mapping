@@ -81,6 +81,15 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 ## [Quick Run](tutorial/INSTALL.md)
 
+The implementation of baseline method **F2F**, only radius keyframe selection + fix-cov PGO.
+
+## TO DO
+
+- [ ] clean codes
+- [ ] Add more dataset support
+- [ ] Add single-session mode
+- [ ] Add baseline methods M2F
+
 ## Citations
 
 Please cite:
@@ -111,7 +120,6 @@ The code in this project is adapted from the following projects:
 
 - The odometry  method is adapted from [FAST-LIO2](https://github.com/hku-mars/FAST_LIO).
 - The basic framework for pose graph optimization (PGO) is adapted from [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM).
-- The Point-to-Plane registration is adapted from [LOAM](https://github.com/laboshinl/loam_velodyne).
 
 ## Contributors
 

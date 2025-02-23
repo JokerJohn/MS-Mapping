@@ -14,10 +14,8 @@ public:
         {
                 LoadRosParams(nh);
                 srvSaveMap = nh.advertiseService("/save_map", &MSMapping::SaveMap, this);
-                pubLaserCloudSurround =
-                    nh.advertise<sensor_msgs::PointCloud2>("/current_cloud", 10);
-                pubLaserCloudCrop =
-                    nh.advertise<sensor_msgs::PointCloud2>("/crop_cloud", 10);
+                pubLaserCloudSurround =  nh.advertise<sensor_msgs::PointCloud2>("/current_cloud", 10);
+                pubLaserCloudCrop =  nh.advertise<sensor_msgs::PointCloud2>("/crop_cloud", 10);
                 pubOdomAftPGO = nh.advertise<nav_msgs::Odometry>("/pgo_odom", 100);
                 pubOdomAftGlobal = nh.advertise<nav_msgs::Odometry>("/global_odom", 100);
                 pubPathAftPGO = nh.advertise<nav_msgs::Path>("/fusion_path", 100);
@@ -57,8 +55,7 @@ public:
                 pubDebugPoseOdom = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
                     "/debug_odom_initial", 100);
 
-                subImu = nh.subscribe<sensor_msgs::Imu>(imu_topic, 2000,
-                                                        &MSMapping::ImuCallback, this,
+                subImu = nh.subscribe<sensor_msgs::Imu>(imu_topic, 2000,  &MSMapping::ImuCallback, this,
                                                         ros::TransportHints().tcpNoDelay());
 
                 subLaserCloudFullRes = nh.subscribe<sensor_msgs::PointCloud2>(

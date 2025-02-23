@@ -53,6 +53,7 @@ find_package(catkin REQUIRED COMPONENTS
         )
 
 
+# find_package(yaml-cpp REQUIRED)
 find_package(Open3D REQUIRED)
 find_package(Boost REQUIRED COMPONENTS timer)  # for some error
 find_package(Eigen3 REQUIRED)
@@ -75,7 +76,9 @@ catkin_package()
 
 include_directories(
         include
+        /usr/include/libxml2
         third_parties
+        /usr/local/include/yaml-cpp
         ${catkin_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
@@ -97,7 +100,6 @@ add_executable(ms_mapping
         include/base_type.cpp
         src/data_saver.cpp
         src/cloud_process.cpp
-        include/factors/gravity_kalman_filter.h
         src/ms_mapping/ms_mapping.cpp
         src/ms_mapping/ms_mapping_node.cpp
         )

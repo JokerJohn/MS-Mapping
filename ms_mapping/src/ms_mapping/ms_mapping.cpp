@@ -1,5 +1,4 @@
 #include "ms_mapping.h"
-#include <opencv2/core/hal/intrin.hpp>
 
 void MSMapping::pose_slam()
 {
@@ -36,8 +35,7 @@ void MSMapping::pose_slam()
             TicToc tic;
 
             // Measure the time for saving keyframe radius.
-            if (!SaveKeyframeRadius(dtf))
-                continue;
+            if (!SaveKeyframeRadius(dtf)) continue;
             t1 = tic.toc();
             t1_all += t1;
         }
@@ -80,12 +78,12 @@ void MSMapping::pose_slam()
             t2_all += t2;
         }
 
-        // {
-        //     // For baseline Map-to-Frame (M2F)
-        //     TicToc tic;
-        //     AddMapPriorFactor();
-        //     std::cout << "[INFO] Global matching cost: " << tic.toc() << " ms" << std::endl;
-        // }
+        {
+            // For baseline Map-to-Frame (M2F)
+            // TicToc tic;
+            // AddMapPriorFactor();
+            // std::cout << "[INFO] Global matching cost: " << tic.toc() << " ms" << std::endl;
+        }
 
         // Add loop closure factors if enabled.
         if (useLoopCloser)
@@ -165,57 +163,11 @@ void MSMapping::InitParmeters()
     globalmap_filter_ptr.reset(new pcl::PointCloud<PointT>());
     globalmap_filter_extracted_ptr.reset(new pcl::PointCloud<PointT>());
 
-    // Optionally load a global prior map.
-    /*
-    if (useGlobalPrior) {
-        TicToc ticToc;
-        pcl::io::loadPCDFile((configDirectory + "map_file/" + sequence + ".pcd").c_str(), *globalmap_ptr);
-        std::cout << BOLDWHITE << "Load map file: " << configDirectory + sequence + ".pcd"
-                  << ", " << globalmap_ptr->size() << std::endl;
-        if (globalmap_ptr->empty()) {
-            std::cout << BOLDRED << "Failed to load empty map!" << std::endl;
-            ros::shutdown();
-            return;
-        }
-        pcl::PointCloud<pcl::PointXYZI>::Ptr global_map(new pcl::PointCloud<pcl::PointXYZI>);
-        pcl::copyPointCloud(*globalmap_ptr, *global_map);
-        // VoxelGrid downsampling
-        pcl::VoxelGrid<pcl::PointXYZI> sor;
-        sor.setInputCloud(global_map);
-        sor.setLeafSize(1.0, 1.0, 1.0);
-        // sor.setLeafSize(0.1, 0.1, 0.1);
-        sor.filter(*globalmap_filter_ptr);
-        kdtreeSurfFromMap->setInputCloud(globalmap_filter_ptr);
-        std::cout << BOLDBLUE << "Global map size and time: " << globalmap_filter_ptr->size() << ", "
-                  << ticToc.toc() << "ms" << std::endl;
-    }
-    */
-
     // For multi-session mapping mode, load the global map for relocalization.
     if (useMultiMode)
-    {
-        TicToc ticToc;
-        pcl::io::loadPCDFile((mapDirectory + "map.pcd").c_str(), *globalmap_ptr);
-        std::cout << BOLDWHITE << "Load map file: " << mapDirectory + "map.pcd"
-                  << ", " << globalmap_ptr->size() << std::endl;
-        if (globalmap_ptr->empty())
-        {
-            std::cout << BOLDRED << "Failed to load empty map!" << std::endl;
-            ros::shutdown();
-            return;
-        }
-        pcl::PointCloud<pcl::PointXYZI>::Ptr global_map(new pcl::PointCloud<pcl::PointXYZI>);
-        pcl::copyPointCloud(*globalmap_ptr, *global_map);
-        pcl::VoxelGrid<pcl::PointXYZI> sor;
-        sor.setInputCloud(global_map);
-        sor.setLeafSize(1.0, 1.0, 1.0);
-        sor.filter(*globalmap_filter_ptr);
-        kdtreeSurfFromMap->setInputCloud(globalmap_filter_ptr);
-        std::cout << BOLDBLUE << "Global map size and time: " << globalmap_filter_ptr->size() << ", "
-                  << ticToc.toc() << "ms" << std::endl;
-
+    {       
         // Check for consistency between old graph and measurements.
-        TicToc ticToc2;
+        TicToc ticToc;
         oldGraph = dataSaverPtr->BuildFactorGraph(mapDirectory + "pose_graph.g2o", oldValues);
         old_node_idx = oldValues.size();
         dataSaverPtr->ReadPosesAndPointClouds(mapDirectory + "optimized_poses_tum.txt", mapDirectory + "key_point_frame/", oldMeasurements, globalmap_ptr);
@@ -224,9 +176,20 @@ void MSMapping::InitParmeters()
             std::cout << BOLDRED << "Inconsistency found: graph size (" << oldGraph.size()
                       << ") does not match measurements size (" << oldMeasurements.size() << ")" << std::endl;
         }
+        if(globalmap_ptr->empty())
+        {
+            std::cout << BOLDRED << "Failed to load empty map!" << std::endl;
+            ros::shutdown();
+            return;
+        }
+        kdtreeSurfFromMap->setInputCloud(globalmap_ptr);
+        std::cout << "[INFO] Publishing old session map point cloud..." << std::endl;
+        publishCloud(pubOldmap, globalmap_ptr, ros::Time::now(), odom_link);
+        std::cout << BOLDBLUE << "[INFO] Global map size and time: " << globalmap_ptr->size() << ", "
+                  << ticToc.toc() << "ms" << std::endl;
         std::cout << "[INFO] Prior measurements: poses " << oldMeasurements.size() << ", graph "
                   << oldGraph.size() << ", values " << oldValues.size() << std::endl;
-        std::cout << "[INFO] Read data time: " << ticToc2.toc() / 1000.0 << " s" << std::endl;
+        std::cout << "[INFO] Read data time: " << ticToc.toc() / 1000.0 << " s" << std::endl;
     }
 
     // Initialize ISAM2 parameters.
@@ -276,10 +239,6 @@ void MSMapping::InitSystem(Measurement &measurement)
         std::cout << "[WARN] Multi-session mode disabled. Using identity pose." << std::endl;
         return;
     }
-
-    // Publish the old map point cloud.
-    std::cout << "[INFO] Publishing old session map point cloud..." << std::endl;
-    publishCloud(pubOldmap, globalmap_ptr, ros::Time::now(), odom_link);
 
     // Convert and save the initial cloud.
     pcl::PointCloud<PointT>::Ptr unused_result(new pcl::PointCloud<PointT>());
@@ -510,16 +469,14 @@ void MSMapping::AddOdomFactorToOldGraph()
     predict_pose = prevPose.compose(rel_pose);
 
     std::unique_lock<std::mutex> graph_guard_1(mtxPosegraph);
-    oldGraph.emplace_shared<BetweenFactor<Pose3>>(
-        X(prev_node_add_idx), X(curr_node_add_idx), rel_pose, noise_odom_between);
+    oldGraph.emplace_shared<BetweenFactor<Pose3>>(X(prev_node_add_idx), X(curr_node_add_idx), rel_pose, noise_odom_between);
     graph_guard_1.unlock();
     std::cout << "[INFO] Added odometry factor: " << prev_node_add_idx << " -> " << curr_node_add_idx << std::endl;
 }
 
 void MSMapping::AddMapPriorFactor()
 {
-    if (curr_node_idx < 1)
-        return;
+    if (curr_node_idx < 1)  return;
 
     TicToc tic_toc;
     useGlobalPrior = true;
@@ -855,7 +812,7 @@ bool MSMapping::SyncData(Measurement &measurement)
             imuQueue.pop_front();
         }
     }
-    
+
     return true;
 }
 
@@ -876,10 +833,7 @@ void MSMapping::PubPath()
     for (int node_idx = 0; node_idx < oldMeasurements.size(); node_idx++)
     {
         const Pose6D pose_est = oldMeasurements.at(node_idx).updated_pose;
-        //        const Pose6D pose_loc = oldMeasurements.at(node_idx).global_pose;
-        //        const Pose6D odom_pose = oldMeasurements.at(node_idx).key_pose;
-        odomAftPGO.header.stamp =
-            ros::Time().fromSec(oldMeasurements.at(node_idx).odom_time);
+        odomAftPGO.header.stamp = ros::Time().fromSec(oldMeasurements.at(node_idx).odom_time);
         odomAftPGO.pose.pose.position.x = pose_est.x;
         odomAftPGO.pose.pose.position.y = pose_est.y;
         odomAftPGO.pose.pose.position.z = pose_est.z;
@@ -890,17 +844,6 @@ void MSMapping::PubPath()
         geometry_msgs::PoseStamped poseStampAftPGO;
         poseStampAftPGO.header = odomAftPGO.header;
         poseStampAftPGO.pose = odomAftPGO.pose.pose;
-        //        Pose6D odom_pose_trans = odom_pose;
-        //        geometry_msgs::PoseStamped poseStampLIO;
-        //        poseStampLIO.header = odomAftPGO.header;
-        //        poseStampLIO.pose.position.x = odom_pose_trans.x;
-        //        poseStampLIO.pose.position.y = odom_pose_trans.y;
-        //        poseStampLIO.pose.position.z = odom_pose_trans.z;
-        //        poseStampLIO.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(
-        //                odom_pose_trans.roll, odom_pose_trans.pitch, odom_pose_trans.yaw);
-        //        pathLIO.header.stamp = odomAftPGO.header.stamp;
-        //        pathLIO.poses.push_back(poseStampLIO);
-
         if (node_idx >= old_node_idx)
         {
             pathNewPGO.header.stamp = odomAftPGO.header.stamp;
@@ -912,85 +855,26 @@ void MSMapping::PubPath()
             pathAftPGO.poses.push_back(poseStampAftPGO);
         }
 
-        // imu path
-        /*        if (oldMeasurements.at(node_idx).has_imu) {
-                    const nav_msgs::Odometry imu_optimized_odom = oldMeasurements.at(node_idx).imu_odom;
-
-                    geometry_msgs::PoseStamped poseStampIMU;
-                    poseStampIMU.header = imu_optimized_odom.header;
-                    poseStampIMU.pose.position.x = imu_optimized_odom.pose.pose.position.x;
-                    poseStampIMU.pose.position.y = imu_optimized_odom.pose.pose.position.y;
-                    poseStampIMU.pose.position.z = imu_optimized_odom.pose.pose.position.z;
-                    poseStampIMU.pose.orientation = imu_optimized_odom.pose.pose.orientation;
-                    pathIMU.header.stamp = imu_optimized_odom.header.stamp;
-                    pathIMU.poses.push_back(poseStampIMU);
-        //            pathAftPGO.header.stamp = odomAftPGO.header.stamp;
-        //            pathAftPGO.poses.push_back(poseStampAftPGO);
-                }*/
-
-        /* if (oldMeasurements.at(node_idx).global_score != 0) {
-             localizationOdom.header.stamp =
-                     ros::Time().fromSec(oldMeasurements.at(node_idx).odom_time);
-             localizationOdom.pose.pose.position.x = pose_loc.x;
-             localizationOdom.pose.pose.position.y = pose_loc.y;
-             localizationOdom.pose.pose.position.z = pose_loc.z;
-             localizationOdom.pose.pose.orientation =
-                     tf::createQuaternionMsgFromRollPitchYaw(pose_loc.roll, pose_loc.pitch,
-                                                             pose_loc.yaw);
-             localizationOdom.pose.covariance.at(0) = pose_loc.cov(0, 0);
-             localizationOdom.pose.covariance.at(7) = pose_loc.cov(0, 1);
-             localizationOdom.pose.covariance.at(14) = pose_loc.cov(0, 2);
-             localizationOdom.pose.covariance.at(21) = pose_loc.cov(0, 3);
-             localizationOdom.pose.covariance.at(28) = pose_loc.cov(0, 4);
-             localizationOdom.pose.covariance.at(35) = pose_loc.cov(0, 5);
-
-             geometry_msgs::PoseStamped poseStampLoc;
-             poseStampLoc.header = localizationOdom.header;
-             poseStampLoc.pose = localizationOdom.pose.pose;
-             pathLocalization.header.stamp = localizationOdom.header.stamp;
-             pathLocalization.poses.push_back(poseStampLoc);
-         }*/
-    }
-    //    odomAftPGO.pose.covariance.at(0) = eigen_values[0];
-    //    odomAftPGO.pose.covariance.at(7) = eigen_values[1];
-    //    odomAftPGO.pose.covariance.at(14) = eigen_values[2];
-    //    odomAftPGO.pose.covariance.at(0) = poseCovariance(3, 3) * 1e6;
-    //    odomAftPGO.pose.covariance.at(7) = poseCovariance(4, 4) * 1e6;
-    //    odomAftPGO.pose.covariance.at(14) = poseCovariance(5, 5) * 1e6;
-
-    // 调整poseCovariance的列顺序
-    Eigen::MatrixXd adjustedCovariance(6, 6);
-    adjustedCovariance.block<3, 3>(0, 0) = poseCovariance.block<3, 3>(3, 3); // 平移部分
-    adjustedCovariance.block<3, 3>(0, 3) = poseCovariance.block<3, 3>(3, 0); // 平移与旋转之间的协方差
-    adjustedCovariance.block<3, 3>(3, 0) = poseCovariance.block<3, 3>(0, 3); // 旋转与平移之间的协方差
-    adjustedCovariance.block<3, 3>(3, 3) = poseCovariance.block<3, 3>(0, 0); // 旋转部分
-                                                                             // 将调整后的矩阵赋值给odomAftPGO.pose.covariance
-    for (int i = 0; i < 6; ++i)
-    {
-        for (int j = 0; j < 6; ++j)
+        // 调整poseCovariance的列顺序
+        Eigen::MatrixXd adjustedCovariance(6, 6);
+        adjustedCovariance.block<3, 3>(0, 0) = poseCovariance.block<3, 3>(3, 3); // 平移部分
+        adjustedCovariance.block<3, 3>(0, 3) = poseCovariance.block<3, 3>(3, 0); // 平移与旋转之间的协方差
+        adjustedCovariance.block<3, 3>(3, 0) = poseCovariance.block<3, 3>(0, 3); // 旋转与平移之间的协方差
+        adjustedCovariance.block<3, 3>(3, 3) = poseCovariance.block<3, 3>(0, 0); // 旋转部分
+                                                                                // 将调整后的矩阵赋值给odomAftPGO.pose.covariance
+        for (int i = 0; i < 6; ++i)
         {
-            odomAftPGO.pose.covariance.at(i * 6 + j) = adjustedCovariance(i, j);
+            for (int j = 0; j < 6; ++j)
+            {
+                odomAftPGO.pose.covariance.at(i * 6 + j) = adjustedCovariance(i, j);
+            }
         }
     }
 
     pubOdomAftPGO.publish(odomAftPGO);
-    // pubOdomAftGlobal.publish(localizationOdom);
     pubPathAftPGO.publish(pathAftPGO);
     pubPathNewpgo.publish(pathNewPGO);
-    // pubLocalizationPath.publish(pathLocalization);
-    // pubPathLIO.publish(pathLIO);
-
-    // publish latest imu path
-    //    while (!pathIMU.poses.empty() &&
-    //           pathIMU.poses.front().header.stamp.toSec() < keyMeasures.at(curr_node_idx).lidar_time - 3.0)
-    //        pathIMU.poses.erase(pathIMU.poses.begin());
-
-    //    if (pubPathLIO.getNumSubscribers() != 0) {
-    //        pathIMU.header.stamp = ros::Time().fromSec(oldMeasurements.at(curr_node_add_idx).lidar_time);
-    //        pathIMU.header.frame_id = odom_link;
-    //        pubPathIMU.publish(pathIMU);
-    //    }
-
+    
     // publish current cloud
     pcl::PointCloud<PointT>::Ptr transform_cloud_ptr(new pcl::PointCloud<PointT>);
     *transform_cloud_ptr = *TransformPointCloud(oldMeasurements[curr_node_add_idx].lidar,
@@ -1011,8 +895,7 @@ void MSMapping::PubPath()
     q.setY(odomAftPGO.pose.pose.orientation.y);
     q.setZ(odomAftPGO.pose.pose.orientation.z);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, odomAftPGO.header.stamp,
-                                          odom_link, "/aft_pgo"));
+    br.sendTransform(tf::StampedTransform(transform, odomAftPGO.header.stamp,  odom_link, "/aft_pgo"));
 }
 
 void MSMapping::PubMap()

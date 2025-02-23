@@ -477,8 +477,5 @@ void LoadRosParams(ros::NodeHandle &nh)
                      historyKeyframeSearchTimeDiff, 10.0);
     nh.param<int>("pgo/historyKeyframeSearchNum", historyKeyframeSearchNum, 25);
     nh.param<double>("pgo/loopClosureFrequency", loopClosureFrequency, 5);
-    nh.param<double>("pgo/loopFitnessScoreThreshold", loopFitnessScoreThreshold,
-                     0.9);
-
-    // LoadYamlFile(configDirectory + "ouster128_indoors_prior.yaml");
+    nh.param<double>("pgo/loopFitnessScoreThreshold", loopFitnessScoreThreshold,  0.9);
 }

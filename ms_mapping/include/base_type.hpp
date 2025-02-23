@@ -48,7 +48,6 @@
 
 #include <open3d/Open3D.h>
 
-
 // ros
 #include <std_msgs/Float64MultiArray.h>
 #include <std_msgs/Int64MultiArray.h>
@@ -96,7 +95,7 @@
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
-
+#include <opencv2/core/hal/intrin.hpp>
 
 #define RESET "\033[0m"
 #define BLACK "\033[30m"              /* Black */
@@ -121,8 +120,15 @@ using namespace Eigen;
 typedef pcl::PointXYZI PointT;
 typedef Eigen::Matrix<double, 2, 18> Vector28;
 
-using gtsam::symbol_shorthand::G; 
-using gtsam::symbol_shorthand::X; 
+
+using gtsam::symbol_shorthand::B; // Bias  (ax,ay,az,gx,gy,gz)
+using gtsam::symbol_shorthand::G; // GPS pose
+using gtsam::symbol_shorthand::V; // Vel   (xdot,ydot,zdot)
+using gtsam::symbol_shorthand::X; // Pose3 (x,y,z,r,p,y)
+
+using PointT = pcl::PointXYZI;
+
+
 using number_t = double;
 
 enum BA_WEIGHT {

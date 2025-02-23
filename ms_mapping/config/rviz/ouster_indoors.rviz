@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /mapping1
-        - /mapping1/currentPC1/Autocompute Value Bounds1
         - /path1/LIO_PATH1
         - /Odom1/pgoOdom1/Shape1
         - /Odom1/pgoOdom1/Covariance1/Orientation1
@@ -38,7 +37,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: pgoMap
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -115,34 +114,34 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: false
           Value: true
-        - Alpha: 0.05000000074505806
+        - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: -9999
-            Min Value: 9999
+            Max Value: 10
+            Min Value: -10
             Value: true
           Axis: Z
-          Channel Name: intensity
+          Channel Name: z
           Class: rviz/PointCloud2
-          Color: 138; 226; 52
-          Color Transformer: Intensity
-          Decay Time: 5000
-          Enabled: false
-          Invert Rainbow: true
-          Max Color: 239; 41; 41
+          Color: 0; 0; 0
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 255; 255; 255
           Min Color: 0; 0; 0
-          Name: currentPC
+          Name: CurrentCloud
           Position Transformer: XYZ
-          Queue Size: 0
+          Queue Size: 10
           Selectable: true
-          Size (Pixels): 1
-          Size (m): 0.10000000149011612
+          Size (Pixels): 6
+          Size (m): 0.009999999776482582
           Style: Points
           Topic: /current_cloud
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: false
+          Value: true
       Enabled: true
       Name: mapping
     - Class: rviz/Group
@@ -300,7 +299,7 @@ Visualization Manager:
           Marker Topic: /lio_loops
           Name: ICP_CONSTRAINT
           Namespaces:
-            {}
+            lidar_nodes: true
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
@@ -415,7 +414,7 @@ Visualization Manager:
       Color: 233; 185; 110
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
@@ -430,7 +429,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: false
-      Value: false
+      Value: true
     - Alpha: 0.30000001192092896
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -443,7 +442,7 @@ Visualization Manager:
       Color: 239; 41; 41
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 65; 191; 64
@@ -458,7 +457,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
     - Alpha: 0.10000000149011612
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -661,7 +660,7 @@ Visualization Manager:
       Color: 114; 159; 207
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: true
       Max Color: 255; 255; 255
       Max Intensity: 128
@@ -678,7 +677,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
@@ -790,34 +789,6 @@ Visualization Manager:
       start capture: false
       use 3D viewer size: true
       width: 1920
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: z
-      Class: rviz/PointCloud2
-      Color: 0; 0; 0
-      Color Transformer: FlatColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 6
-      Size (m): 0.009999999776482582
-      Style: Points
-      Topic: /current_cloud
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
     - Alpha: 0.699999988079071
       Class: rviz/Map
       Color Scheme: map
@@ -872,7 +843,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 225.3302764892578
+      Distance: 255.16339111328125
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -880,9 +851,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -27.068880081176758
-        Y: 66.4833984375
-        Z: 1.090183973312378
+        X: 11.776368141174316
+        Y: -45.75590515136719
+        Z: 5.037795543670654
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -890,7 +861,7 @@ Visualization Manager:
       Near Clip Distance: 0.009999999776482582
       Pitch: 1.5697963237762451
       Target Frame: aft_pgo
-      Yaw: 3.533587694168091
+      Yaw: 3.518583059310913
     Saved: ~
 Window Geometry:
   Displays:
