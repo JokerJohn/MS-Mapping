@@ -141,14 +141,6 @@ public:
 
         void saveColorCloudMap(pcl::PointCloud<pcl::PointXYZRGB> cloud_ptr);
 
-        int ReadParameter();
-
-        int SaveKMLTrajectory(const std::vector<Eigen::Vector3d> lla_vec);
-
-        int SaveKMLTrajectory(vector<pair<double, double>> WGSBL,
-                              vector<double> altitude,
-                              vector<pair<int, string>> segmentColor);
-
         void ReadPosesAndPointClouds(const std::string &tum_file, const std::string &cloud_directory,
                                      std::vector<Measurement> &measurements, pcl::PointCloud<PointT>::Ptr globalmap_ptr);
 

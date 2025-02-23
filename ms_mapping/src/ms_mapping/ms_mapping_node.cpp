@@ -11,8 +11,7 @@ int main(int argc, char **argv)
 
     // Use lambda functions to create threads for different tasks concurrently.
     // Thread for pose graph SLAM.
-    std::thread posegraph_slam([&]()
-                               { pgo_wrapper->pose_slam(); });
+    std::thread posegraph_ms([&]()   { pgo_wrapper->pose_slam(); });
 
     // Thread for visualization.
     std::thread viz_map([&]()
@@ -38,8 +37,8 @@ int main(int argc, char **argv)
     pgo_wrapper->requestStop();
 
     // Join all threads to ensure they finish execution before the program exits.
-    if (posegraph_slam.joinable())
-        posegraph_slam.join();
+    if (posegraph_ms.joinable())
+    posegraph_ms.join();
     if (viz_map.joinable())
         viz_map.join();
     if (lc_detection.joinable())

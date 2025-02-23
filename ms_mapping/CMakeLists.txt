@@ -52,17 +52,14 @@ find_package(catkin REQUIRED COMPONENTS
         message_generation
         )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/share/cmake/geographiclib/")
-find_package(GeographicLib REQUIRED)
-find_package(yaml-cpp REQUIRED)
+
+# find_package(yaml-cpp REQUIRED)
 find_package(Open3D REQUIRED)
 find_package(Boost REQUIRED COMPONENTS timer)  # for some error
 find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GTSAM REQUIRED QUIET)
-# find_package(Gflags REQUIRED)
-# find_package(Glog REQUIRED)
 
 ###########################################################################
 # Find Boost
@@ -90,11 +87,8 @@ include_directories(
         ${YAML_CPP_INCLUDE_DIR}
         ${PYTHON_INCLUDE_DIRS}
         ${Open3D_INCLUDE_DIRS}
-        ${CERES_INCLUDE_DIRS}
-        ${GFLAGS_INCLUDE_DIRS}
-        ${GLOG_INCLUDE_DIRS}
 )
-link_libraries(-lxml2 yaml-cpp)
+# link_libraries(-lxml2 yaml-cpp)
 
 include_directories(include)
 

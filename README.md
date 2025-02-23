@@ -68,13 +68,15 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 roslaunch ms_mapping ms.launch
 ```
 
+![image-20250223171929118](./README/image-20250223171929118.png)
+
 only save data for the new session part, finally use the python scripts to get the merged map for analysis.
 
 ```
 rosservice call /save_map
 ```
 
-
+![image-20250223172305661](./README/image-20250223172305661.png)
 
 ### Demo Results
 

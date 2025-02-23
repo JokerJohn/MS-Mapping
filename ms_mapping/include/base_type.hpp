@@ -25,7 +25,7 @@
 #include <pcl/search/impl/search.hpp>
 
 // yaml-cpp
-#include <yaml-cpp/yaml.h>
+// #include <yaml-cpp/yaml.h>
 // gtsam
 #include <gtsam/geometry/Pose2.h>
 #include <gtsam/geometry/Pose3.h>
@@ -128,6 +128,7 @@
 using namespace std;
 using namespace Eigen;
 typedef pcl::PointXYZI PointT;
+typedef Eigen::Matrix<double, 2, 18> Vector28;
 
 using gtsam::symbol_shorthand::G; 
 using gtsam::symbol_shorthand::X; 
@@ -626,7 +627,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc(
 pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc2d(
         const std::vector<Pose6D> vectorPose6d);
 
-void LoadYamlFile(string path);
+// void LoadYamlFile(string path);
 
 void LoadRosParams(ros::NodeHandle &nh);
 

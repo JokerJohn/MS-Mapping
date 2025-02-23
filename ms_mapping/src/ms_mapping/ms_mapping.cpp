@@ -148,7 +148,7 @@ void MSMapping::InitParmeters()
     dataSaverPtr->setConfigDir(configDirectory);
     dataSaverPtr->setMapDir(mapDirectory);
     dataSaverPtr->setKeyframe(saveKeyFrame);
-    
+
     std::cout << "[INFO] Old map directory: " << mapDirectory << std::endl;
 
     // Set voxel filter leaf sizes.
@@ -608,114 +608,6 @@ void MSMapping::AddLoopFactor()
     aLoopIsClosed = true;
 }
 
-void MSMapping::AddGPSFactor()
-{
-    if (keyMeasures.back().gps.header.seq == -1)
-        return;
-    nav_msgs::Odometry currGPSOdometry = keyMeasures.back().gps;
-    Pose6D curr_pose = keyMeasures.back().updated_pose;
-
-    // GPS too noisy, skip
-    float gps_x = currGPSOdometry.pose.pose.position.x;
-    float gps_y = currGPSOdometry.pose.pose.position.y;
-    float gps_z = currGPSOdometry.pose.pose.position.z;
-    float noise_x = currGPSOdometry.pose.covariance[0];
-    float noise_y = currGPSOdometry.pose.covariance[7];
-    float noise_z = currGPSOdometry.pose.covariance[14];
-    float status = currGPSOdometry.pose.covariance[4];
-
-    // make sure zhe gps data is stable encough
-    if (abs(noise_x) > gpsCovThreshold && abs(noise_y) > gpsCovThreshold)
-        return;
-    if (abs(gps_x) < 1e-6 && abs(gps_y) < 1e-6)
-        return;
-
-    // ROS_WARN(" gps lidar off time: %f ", off_time);
-    //        std::cout << "currlidar pose: " << transformTobeMapped[3] << ", " <<
-    //        transformTobeMapped[4] << ", "
-    //                  << transformTobeMapped[5] << std::endl;
-    //        std::cout << "currGPS position: " << gps_x << ", " << gps_y << ", "
-    //        << gps_z << std::endl; std::cout << "currGPS cov: " <<
-    //        thisGPS.pose.covariance[0] << ", " << thisGPS.pose.covariance[7]
-    //                  << ", " << thisGPS.pose.covariance[14] << std::endl;
-
-    // Add GPS every a few meters
-    PointT curGPSPoint;
-    Pose6D gpsPoint;
-    gpsPoint.x = curGPSPoint.x = gps_x;
-    gpsPoint.y = curGPSPoint.y = gps_y;
-    gpsPoint.z = curGPSPoint.z = gps_z;
-
-    if (pointDistance(curGPSPoint, lastGPSPoint) < GPS_SKIP_NUMBER)
-        return;
-    lastGPSPoint = curGPSPoint;
-
-    ROS_INFO("curr gps pose: %f, %f , %f", gps_x, gps_y, gps_z);
-    ROS_INFO("curr gps cov: %f, %f , %f", noise_x, noise_y, noise_z);
-    // LOG(INFO) << "GPS Z OFFSET:" << abs(gps_z - curr_pose.z);
-
-    noiseModel::Diagonal::shared_ptr gpsNoiseModel =
-        noiseModel::Diagonal::Variances(
-            (gtsam::Vector(3) << currGPSOdometry.pose.covariance[0],
-             currGPSOdometry.pose.covariance[7],
-             currGPSOdometry.pose.covariance[14])
-                .finished());
-
-    gtsam::GPSFactor gps_factor(
-        X(curr_node_idx), gtsam::Point3(gps_x, gps_y, gps_z), gpsNoiseModel);
-    keyframeGPSfactor.push_back(gps_factor);
-    keyframeGPS.push_back(gpsPoint);
-
-    // only a trick!
-    // we need to accumulate some accurate gps points to initialize the transform
-    // between gps coordinate system and LIO coordinate system
-    // and then we can add gps points one by one into the pose graph
-    // or the whole pose graph will crashed if giving some respectively bad gps
-    // points at first.
-    if (keyframeGPSfactor.size() < accumulatedFactorSize)
-    {
-        ROS_INFO("Accumulated gps factor: %d", keyframeGPSfactor.size());
-        return;
-    }
-
-    if (!gpsTransfromInit)
-    {
-        ROS_INFO("Initialize GNSS transform!");
-        std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
-        for (int i = 0; i < keyframeGPSfactor.size(); ++i)
-        {
-            newFactors.emplace_shared<gtsam::GPSFactor>(keyframeGPSfactor.at(i));
-            gpsIndexContainer[keyframeGPSfactor.at(i).key()] = i;
-        }
-        graph_guard.unlock();
-        gpsTransfromInit = true;
-    }
-    else
-    {
-        // After the coordinate systems are aligned, in theory, the GPS z and the z
-        // estimated by the current LIO system should not be too different.
-        // Otherwise, there is a problem with the quality of the secondary GPS
-        // point.
-        if (abs(gps_z - curr_pose.z) > 30.0 || abs(gps_x - curr_pose.x) > 30)
-        {
-            // ROS_WARN("Too large GNSS z noise %f", noise_z);
-            gtsam::Vector Vector3(3);
-            Vector3 << std::max(noise_x, 10000000.0f), std::max(noise_y, 10000000.0f),
-                std::max(noise_z, 100000000.0f);
-            //            gps_noise = noiseModel::Diagonal::Variances(Vector3);
-            //            gps_factor = gtsam::GPSFactor(curr_node_idx,
-            //            gtsam::Point3(gps_x, gps_y, gps_z), gps_noise);
-        }
-
-        std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
-        newFactors.emplace_shared<GPSFactor>(gps_factor);
-        graph_guard.unlock();
-        gpsIndexContainer[curr_node_idx] = keyframeGPS.size() - 1;
-        // LOG(WARNING) << " ADD GPS OPTIMIZED NODE: " << keyframeGPS.size();
-    }
-    aLoopIsClosed = true;
-}
-
 bool MSMapping::ZUPTDetector()
 {
     if (curr_node_idx < 1)
@@ -852,43 +744,6 @@ bool MSMapping::ZUPTDetector()
     return zupt_flag;
 }
 
-bool MSMapping::SyncGPS(std::deque<nav_msgs::Odometry> &gpsBuf,
-                        nav_msgs::Odometry &alignedGps, double timestamp,
-                        double eps_cam)
-{
-    if (gpsQueue.empty())
-    {
-        return false;
-    }
-    bool gpsFound = false;
-    {
-        std::unique_lock<std::mutex> guard(mutexLock);
-        while (!gpsQueue.empty())
-        {
-            double gpsTime = gpsQueue.front().header.stamp.toSec();
-            if (gpsTime < timestamp - eps_cam)
-            {
-                // The GPS data is too old, discard it
-                gpsQueue.pop_front();
-            }
-            else if (gpsTime > timestamp + eps_cam)
-            {
-                // The GPS data is too new, stop processing
-                break;
-            }
-            else
-            {
-                // Found a GPS data close to the desired timestamp
-                gpsFound = true;
-                alignedGps = gpsQueue.front();
-                gpsQueue.pop_front();
-                break;
-            }
-        }
-    } // mutex is automatically unlocked here
-    return gpsFound;
-}
-
 bool MSMapping::SyncData(Measurement &measurement)
 {
     sensor_msgs::PointCloud2 raw_cloud_msg;
@@ -1000,24 +855,7 @@ bool MSMapping::SyncData(Measurement &measurement)
             imuQueue.pop_front();
         }
     }
-    // Process and align IMU pose...
-    // Align GPS data if used
-    bool has_GPS = false;
-    nav_msgs::Odometry currGPSodom;
-    if (useGPS)
-    {
-        has_GPS = SyncGPS(gpsQueue, currGPSodom, odom_time, 1.0 / gpsFrequence);
-        //        if (currGPSodom.pose.covariance.at(14) != 1.0) {
-        //            has_GPS = false;
-        //        }
-    }
-    if (useGPS && has_GPS)
-    {
-        measurement.gps = currGPSodom;
-        Pose3 gps_pose3 = Pose6dTogtsamPose3(getOdom(currGPSodom));
-        // std::cout << "HAS GPS: " << gps_pose3.translation().transpose() << std::endl;
-    }
-    measurement.has_gps = has_GPS;
+    
     return true;
 }
 
@@ -1401,13 +1239,6 @@ void MSMapping::InitialCallback(
     initialPose = GeoposeToMatrix4d(*pose_msg_ptr);
     std::cout << BOLDBLUE << "Get Rviz Pose estimation: " << initialPose.matrix() << std::endl;
     poseReceived = true;
-}
-
-void MSMapping::GpsCallback(const nav_msgs::OdometryConstPtr &msg_ptr)
-{
-    std::unique_lock<std::mutex> guard(mutexLock);
-    gpsQueue.push_back(*msg_ptr);
-    guard.unlock();
 }
 
 void MSMapping::LoopInfoHandler(

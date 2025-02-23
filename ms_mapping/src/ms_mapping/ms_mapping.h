@@ -1,28 +1,11 @@
-/*******************************************************
- * Copyright (C) 2022, RAM-LAB, Hong Kong University of Science and Technology
- *
- * This file is part of FL2SAM (https://github.com/JokerJohn/FL2SAM-GPS).
- * If you use this code, please cite the respective publications as
- * listed on the above websites.
- *
- * Licensed under the GNU General Public License v3.0;
- * you may not use this file except in compliance with the License.
- *
- * Author: Xiangcheng Hu (xhubd@connect.ust.hk.com)
- * Date: ${Date}
- * Description:
- *******************************************************/
 #ifndef SRC_POSE_SLAM_PRIOR_SRC_POSE_SLAM_PRIOR_H_
 #define SRC_POSE_SLAM_PRIOR_SRC_POSE_SLAM_PRIOR_H_
 
-// #include "base_type.hpp"
 #include "../cloud_process.h"
 #include "../data_saver.h"
-// #include "tic_toc.h"
 
 using namespace gtsam;
 using namespace open3d;
-typedef Eigen::Matrix<double, 2, 18> Vector28;
 
 class MSMapping
 {
@@ -126,9 +109,6 @@ private:
 
         void AddInitialPoseFactor(int closest_index, Measurement &measurement, const Pose3 &icp_pose);
 
-        bool SyncGPS(std::deque<nav_msgs::Odometry> &gpsBuf,
-                     nav_msgs::Odometry &aligedGps, double timestamp, double eps_cam);
-
         bool SyncData(Measurement &measurement);
 
         void AddOdomFactorToOldGraph();
@@ -141,8 +121,6 @@ private:
 
         void AddLoopFactor();
 
-        void AddGPSFactor();
-
         bool ZUPTDetector();
 
         void OptimizeGraph();
@@ -152,8 +130,6 @@ private:
         void SaveData();
 
         bool SaveMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-
-        void GpsCallback(const nav_msgs::OdometryConstPtr &gps_msg_ptr);
 
         void LidarCallback(const sensor_msgs::PointCloud2ConstPtr &pc_msg_ptr);
 
