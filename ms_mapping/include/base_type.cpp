@@ -376,15 +376,6 @@ vector<double> b_acc_cov_n;
 vector<double> extrinT;
 vector<double> extrinR;
 
-// void LoadYamlFile(string path)
-// {
-//     YAML::Node config = YAML::LoadFile(path.c_str());
-
-//     // cout << "lid_topic:" << config["lid_topic"].as<string>() << endl;
-//     //    cout << "sex:" << config["sex"].as<string>() << endl;
-//     //    cout << "age:" << config["age"].as<int>() << endl;
-// }
-
 void LoadRosParams(ros::NodeHandle &nh)
 {
     t_body_sensor = Eigen::Vector3d::Identity();

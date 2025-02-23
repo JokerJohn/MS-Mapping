@@ -24,8 +24,6 @@
 #include <pcl/registration/transformation_estimation_point_to_plane.h>
 #include <pcl/search/impl/search.hpp>
 
-// yaml-cpp
-// #include <yaml-cpp/yaml.h>
 // gtsam
 #include <gtsam/geometry/Pose2.h>
 #include <gtsam/geometry/Pose3.h>
@@ -99,13 +97,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
-
-// #include <gflags/gflags.h>
-// #include <glog/logging.h>
-
-// #include <fmt/core.h>
-// #include <fmt/format.h>
-// #include <fmt/ostream.h>
 
 #define RESET "\033[0m"
 #define BLACK "\033[30m"              /* Black */
@@ -626,8 +617,6 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc(
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc2d(
         const std::vector<Pose6D> vectorPose6d);
-
-// void LoadYamlFile(string path);
 
 void LoadRosParams(ros::NodeHandle &nh);
 
