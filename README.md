@@ -37,11 +37,46 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 ## News
 
+- **2025/02/25**: Baseline method F2F released!
 - **2024/08/08**: We released the first version of MS-Mapping on [ArXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/4EUwIMPff)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.337.search-card.all.click) videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
 
 ## Run
+
+### Baseline: F2F
+
+1. download data.
+
+   | [old session bag (`PK1`)](https://ramlab-ust.direct.quickconnect.to:5001/sharing/t9SM1iPZr) | [new session bag (`RB2`)](https://hkustconnect-my.sharepoint.com/personal/xhubd_connect_ust_hk/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fxhubd%5Fconnect%5Fust%5Fhk%2FDocuments%2Fdataset%2Fpaloc%2FParkinglot%2DRedBird%2D2023%2D10%2D28%2D19%2D09%2D04%2Ezip&parent=%2Fpersonal%2Fxhubd%5Fconnect%5Fust%5Fhk%2FDocuments%2Fdataset%2Fpaloc&ga=1) | [old session results](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/EcoaRBlVdEhMkB4z0jyHkmQBO2feRKSono_fSsVkkCZNOg?e=a8S0SB) |
+   | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+   | ![image (17)](./README/image%20(17).png)                     | ![image-20250116000038243](./README/image-20250116000038243.png) | ![image-20250223170438039](./README/image-20250223170438039.png) |
+
+2. set important parameters of file path: `save_directorysave_directory`, `map_directory`,`bag_path`.
+
+   ```launch
+   <param name="save_directory" type="string" value="/home/xchu/data/pose_slam_prior_result/"/>
+   <param name="map_directory" type="string" value="/home/xchu/data/prior_map/PK01/"/>
+   
+   <!--set your data bag path-->
+   <arg name="bag_path" default="/media/xchu/新加卷/HKUSTGZ-DATASET/2023-10-28-19-09-04-Parkinglot-RedBird02/Parkinglot-RedBird-2023-10-28-19-09-04.bag"/>
+   ```
+
+2. run launch file
+
+```
+roslaunch ms_mapping ms.launch
+```
+
+only save data for the new session part, finally use the python scripts to get the merged map for analysis.
+
+```
+rosservice call /save_map
+```
+
+
+
+### Demo Results
 
 Lets take `CP5` as the old session, and use `CP2` to do incremental mapping base on it.
 
@@ -102,13 +137,8 @@ pcl_viewer merged_map_session_*
 
 ## Dataset
 
-#### [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/)
-
-#### [Newer College](https://ori-drs.github.io/newer-college-dataset/)
-
-#### [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset)
-
-#### [MS-Dataset](https://github.com/JokerJohn/MS-Dataset)
+| [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/) | [Newer College](https://ori-drs.github.io/newer-college-dataset/) | [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset) | [MS-Dataset](https://github.com/JokerJohn/MS-Dataset) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------- |
 
 ![image-20240730151834570](./README/image-20240730151834570.png)
 

@@ -1,0 +1,22 @@
+<launch>
+    <!-- set your data config -->
+    <param name="config_directory" type="string" value="$(find ms_mapping)/config/"/>
+    <param name="save_directory" type="string" value="/home/xchu/data/pose_slam_prior_result/"/>
+    <param name="map_directory" type="string" value="/home/xchu/data/prior_map/PK01/"/>
+
+    <!--set your data bag path-->
+    <arg name="bag_path" default="/media/xchu/新加卷/HKUSTGZ-DATASET/2023-10-28-19-09-04-Parkinglot-RedBird02/Parkinglot-RedBird-2023-10-28-19-09-04.bag"/>
+
+    <arg name="sequence" default="PK1-RB2-TEST"/>
+
+    <!-- set your mapping params-->
+    <rosparam file="$(find ms_mapping)/config/yaml/ms.yaml" command="load"/>
+    <rosparam param="common/sequence" subst_value="true">$(arg sequence)</rosparam>
+
+    <node pkg="ms_mapping" type="fastlio" name="fastlio" output="log" required="true"/>
+    <node pkg="ms_mapping" type="ms_mapping" name="ms_mapping" output="screen" required="true"/>
+
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz_pgo"
+          args="-d $(find ms_mapping)/config/rviz/ouster_indoors.rviz"/>
+    <node pkg="rosbag" type="play" name="bag_play" args="$(arg bag_path) --clock -d 5 -r 1.0 -s 0"/>
+</launch>
