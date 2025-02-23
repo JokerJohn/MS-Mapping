@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: ms_mapping
-Description: Description of ms_mapping
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
