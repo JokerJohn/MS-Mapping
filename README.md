@@ -98,7 +98,7 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 
 Please cite:
 ```bibtex
-@misc{hu2024msmapping,
+@misc{hu2024mskeyframe,
       title={MS-Mapping: Multi-session LiDAR Mapping with Wasserstein-based Keyframe Selection}, 
       author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Wei Zhang and Ping Tan},
       year={2024},
@@ -107,7 +107,7 @@ Please cite:
       primaryClass={cs.RO}
 }
 
-@misc{hu2024msmappinguncertaintyawarelargescalemultisession,
+@misc{hu2024msmapping,
       title={MS-Mapping: An Uncertainty-Aware Large-Scale Multi-Session LiDAR Mapping System}, 
       author={Xiangcheng Hu, Jin Wu, Jianhao Jiao, Binqian Jiang, Wei Zhang, Wenshuo Wang and Ping Tan},
       year={2024},
