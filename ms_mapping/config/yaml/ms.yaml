@@ -18,7 +18,7 @@ common:
   map_saved_size: 0.1
 
   useImuFrame: false                        # when we use imu frame, we will get dense color cloud
-  useLoopCloser: true                       # if we enable loop closure
+  useLoopClosure: true                       # if we enable loop closure
 
   # save data
   saveResultBodyFrame: true
@@ -59,7 +59,7 @@ pgo:
   
   useRawCloud: true
   method: 2                                       # ICP for Loop closure. 0: icp 1:point2plane 2:gicp
-  baseline: 0                                     # 0:F2F; 
+  baseline: 0                                     # 0:F2F, 1:M2F
   useMultiMode: true                              # true for multi-session, false for single session
 
   loopZOffset: 5.0                                # for escaltor

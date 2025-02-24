@@ -1,4 +1,4 @@
-### Baseline: F2F
+### Baseline: F2F or M2F
 
 1. download data. For demo results you can directly download the [old session results](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/EcoaRBlVdEhMkB4z0jyHkmQBO2feRKSono_fSsVkkCZNOg?e=a8S0SB).
 
@@ -6,7 +6,7 @@
    | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
    | ![image (17)](./INSTALL/image%20(17).png)                    | ![image-20250116000038243](./INSTALL/image-20250116000038243.png) | ![image-20250223170438039](./INSTALL/image-20250223170438039.png) |
 
- You can also use the single session mode to generate the map data of the [old session](https://ramlab-ust.direct.quickconnect.to:5001/sharing/t9SM1iPZr), just set parameters `useMultiMode` as false. Check the map folder, three files must exists, `key_point_frame`, `pose_graph.g2o` and `optimized_poses_tum.txt`.
+ You can also use the single session mode to generate the map data of the [old session](https://ramlab-ust.direct.quickconnect.to:5001/sharing/t9SM1iPZr), just set parameters `useMultiMode` as `false`. Check the map folder, three files must exists, `key_point_frame`, `pose_graph.g2o` and `optimized_poses_tum.txt`.
 
 ![image-20250224125924133](./INSTALL/image-20250224125924133.png)
 

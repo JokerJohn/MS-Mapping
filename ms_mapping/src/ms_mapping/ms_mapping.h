@@ -67,6 +67,8 @@ public:
                     "/lidar_odometry", 10000, &MSMapping::OdometryCallback, this);
                 //                "/lio_sam_6axis/mapping/odometry", 10000, &MSMapping::OdometryCallback, this);
 
+
+                // if you got a high bandwidth imu odometry, you can use this topic
                 subLaserOdometryIMU = nh.subscribe<nav_msgs::Odometry>(
                     "/lidar_odometry_current", 10000, &MSMapping::OdometryIMUCallback, this);
 
@@ -74,10 +76,9 @@ public:
                                               &MSMapping::InitialCallback, this);
 
                 // load prior pose
-                nh.param<vector<double>>("common/initial_pose", initial_pose_vector,
-                                         vector<double>());
+                nh.param<vector<double>>("common/initial_pose", initial_pose_vector,  vector<double>());
 
-                InitParmeters();
+                InitParameters();
         }
 
         ~MSMapping() {}
@@ -90,11 +91,11 @@ public:
 
         void requestStop()
         {
-                stopRequested = true;
+            stopRequested = true;
         }
 
 private:
-        void InitParmeters();
+        void InitParameters();
 
         void InitSystem(Measurement &measurement);
 
@@ -138,6 +139,7 @@ private:
 
         void InitialCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &pose_msg_ptr);
 
+        // if you got loop constraint from other place recognition algorithm, then you can use this topic
         void LoopInfoHandler(const std_msgs::Float64MultiArray::ConstPtr &loopMsg);
 
         void PubPath(void);
@@ -261,7 +263,6 @@ private:
         std::map<int, int> loopRGBVisualIndexCheckedMap;
 
         pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtreeHistoryKeyPoses;
-        pcl::KdTreeFLANN<PointT>::Ptr kdtreeSurfFromMap;
         Eigen::Matrix<float, 6, 6> icp_cov;
 
         int iterate_number = 0;
@@ -333,8 +334,8 @@ private:
 
         pcl::PointCloud<PointT>::Ptr laserCloudMapPGO;
         pcl::PointCloud<PointT>::Ptr globalmap_ptr;
-        pcl::PointCloud<PointT>::Ptr globalmap_filter_ptr;
-        pcl::PointCloud<PointT>::Ptr globalmap_filter_extracted_ptr;
+        // pcl::PointCloud<PointT>::Ptr globalmap_filter_ptr;
+        // pcl::PointCloud<PointT>::Ptr globalmap_filter_extracted_ptr;
 
         std::vector<PointT> laserCloudOriSurfVec; // surf point holder for parallel computation
         std::vector<PointT> coeffSelSurfVec;

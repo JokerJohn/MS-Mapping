@@ -51,6 +51,7 @@ void MSMapping::pose_slam()
             std::unique_lock<std::mutex> kf_guard(mKF);
             keyMeasures.push_back(measurement_curr);     // New frame only.
             oldMeasurements.push_back(measurement_curr); // All frames.
+            kf_guard.unlock();
             std::cout << "[INFO] Updated keyframe data. Total keyframes: " << keyMeasures.size() << std::endl;
         }
 
@@ -60,13 +61,11 @@ void MSMapping::pose_slam()
         curr_node_add_idx = oldMeasurements.size() - 1;
         prev_node_add_idx = curr_node_add_idx - 1;
 
-
         // Retrieve the current state from LIO2 and update key state history.
         lioState2 = GetStateFromLIO2(curr_node_idx);
         keyLIOState2.push_back(lioState2);
 
         {
-            // For baseline Frame-to-Frame (F2F)
             TicToc tic;
             AddOdomFactorToOldGraph();
 
@@ -76,14 +75,22 @@ void MSMapping::pose_slam()
 
         {
             // For baseline Map-to-Frame (M2F)
-            // TicToc tic;
-            // AddMapPriorFactor();
-            // std::cout << "[INFO] Global matching cost: " << tic.toc() << " ms" << std::endl;
+            // that means you trust the old session map more.
+            // you can also adjust the prior pose noise to make the old session map more or less reliable.
+            if (baseline == 1)
+            {
+                TicToc tic;
+                AddMapPriorFactor();
+                std::cout << "[INFO] Global matching cost: " << tic.toc() << " ms" << std::endl;
+            }
         }
 
         // Add loop closure factors if enabled.
-        if (useLoopCloser)
+        if (useLoopClosure)
         {
+            // useMultiMode false, single session mode
+            // baseline == 1
+            // For baseline Frame-to-Frame (F2F)
             AddLoopFactor();
         }
 
@@ -104,7 +111,7 @@ void MSMapping::pose_slam()
         t5_all += t5;
 
         // Logging current and average times for each processing stage.
-        if (curr_node_idx % 1 == 0)
+        if (curr_node_idx % 10 == 0)
         {
             std::cout << "[INFO] ----Frame: " << curr_node_idx
                       << ", Iteration Time: " << t5 << " ms, t1: " << t1
@@ -128,13 +135,11 @@ void MSMapping::pose_slam()
     }
 }
 
-void MSMapping::InitParmeters()
+void MSMapping::InitParameters()
 {
     // Load initial pose from the vector and print it.
-    initialPose = Eigen::Map<const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(
-        initial_pose_vector.data(), 4, 4);
-    std::cout << "[INFO] Loaded initial pose:\n"
-              << initialPose.matrix() << std::endl;
+    initialPose = Eigen::Map<const Eigen::Matrix<double, -1, -1, Eigen::RowMajor>>(initial_pose_vector.data(), 4, 4);
+    std::cout << "[INFO] Loaded initial pose:\n"  << initialPose.matrix() << std::endl;
 
     // Set up data saver parameters.
     dataSaverPtr = std::make_unique<DataSaver>(saveDirectory, sequence);
@@ -143,7 +148,7 @@ void MSMapping::InitParmeters()
     dataSaverPtr->setMapDir(mapDirectory);
     dataSaverPtr->setKeyframe(saveKeyFrame);
 
-    std::cout << "[INFO] Old map directory: " << mapDirectory << std::endl;
+    std::cout << "[INFO] Old session map directory: " << mapDirectory << std::endl;
 
     // Set voxel filter leaf sizes.
     downSizeFilterMapPGO.setLeafSize(map_viewer_size, map_viewer_size, map_viewer_size);
@@ -152,15 +157,17 @@ void MSMapping::InitParmeters()
 
     // Initialize various point cloud and KD-tree pointers.
     kdtreeHistoryKeyPoses.reset(new pcl::KdTreeFLANN<pcl::PointXYZ>());
-    kdtreeSurfFromMap.reset(new pcl::KdTreeFLANN<PointT>());
     laserCloudMapPGO.reset(new pcl::PointCloud<PointT>());
     globalmap_ptr.reset(new pcl::PointCloud<PointT>());
-    globalmap_filter_ptr.reset(new pcl::PointCloud<PointT>());
-    globalmap_filter_extracted_ptr.reset(new pcl::PointCloud<PointT>());
 
     // For multi-session mapping mode, load the global map for relocalization.
     if (useMultiMode)
     {
+        if (baseline == 1)
+            useLoopClosure = false;
+        else if (baseline == 0)
+            useLoopClosure = true;
+
         // Check for consistency between old graph and measurements.
         TicToc ticToc;
         oldGraph = dataSaverPtr->BuildFactorGraph(mapDirectory + "pose_graph.g2o", oldValues);
@@ -177,7 +184,6 @@ void MSMapping::InitParmeters()
             ros::shutdown();
             return;
         }
-        kdtreeSurfFromMap->setInputCloud(globalmap_ptr);
         std::cout << "[INFO] Publishing old session map point cloud..." << std::endl;
         publishCloud(pubOldmap, globalmap_ptr, ros::Time::now(), odom_link);
         std::cout << BOLDBLUE << "[INFO] Global map size and time: " << globalmap_ptr->size() << ", "
@@ -382,6 +388,7 @@ void MSMapping::AddInitialPoseFactor(int closest_index, Measurement &measurement
         measurement.global_score = priorScore;
         oldMeasurements.push_back(measurement);
         keyMeasures.push_back(measurement);
+        kf_guard.unlock();
     }
     std::cout << "[INFO] Updated measurements. Keyframes: " << keyMeasures.size()
               << ", Total measurements: " << oldMeasurements.size() << std::endl;
@@ -409,6 +416,7 @@ void MSMapping::AddInitialPoseFactor(Measurement &measurement)
         std::unique_lock<std::mutex> kf_guard(mKF);
         oldMeasurements.push_back(measurement);
         keyMeasures.push_back(measurement);
+        kf_guard.unlock();
     }
     std::cout << "[INFO] Updated measurements. Keyframes: " << keyMeasures.size()
               << ", Total measurements: " << oldMeasurements.size() << std::endl;
@@ -425,23 +433,20 @@ void MSMapping::AddInitialPoseFactor(Measurement &measurement)
 void MSMapping::OptimizeGraph()
 {
     oldValues.insert(X(curr_node_add_idx), predict_pose);
-    bool use_isam = true;
     try
     {
         std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
-        if (use_isam)
+        // std::cout << "[INFO] Updating ISAM2 with current graph..." << std::endl;
+        isam->update(oldGraph, oldValues);
+        isam->update();
+        for (int i = 0; i < 5; ++i)
         {
-            // std::cout << "[INFO] Updating ISAM2 with current graph..." << std::endl;
-            isam->update(oldGraph, oldValues);
             isam->update();
-            for (int i = 0; i < 5; ++i)
-            {
-                isam->update();
-            }
-            // currently, we can not estimate the covariance of pose correctly using F2F method.
-            currentEstimate = isam->calculateEstimate();
-            poseCovariance = isam->marginalCovariance(X(curr_node_add_idx));
         }
+        // currently, we can not estimate the covariance of pose correctly using F2F method.
+        currentEstimate = isam->calculateEstimate();
+        poseCovariance = isam->marginalCovariance(X(curr_node_add_idx));
+        graph_guard.unlock();
     }
     catch (const gtsam::IndeterminantLinearSystemException &e)
     {
@@ -483,6 +488,8 @@ void MSMapping::OptimizeGraph()
             p1.yaw = pose.rotation().yaw();
         }
     }
+    kf_guard.unlock();
+
     aLoopIsClosed = false;
     // aGlobalConstrained = false;
 }
@@ -510,18 +517,15 @@ void MSMapping::AddMapPriorFactor()
         return;
 
     TicToc tic_toc;
-    useGlobalPrior = true;
-    if (useGlobalPrior)
+    bool flag = GetGlobalICP(keyMeasures.at(curr_node_idx));
+    if (flag)
     {
-        bool flag = GetGlobalICP(keyMeasures.at(curr_node_idx));
-        if (flag)
-        {
-            Pose3 poseGlobal = Pose6dTogtsamPose3(keyMeasures.at(curr_node_idx).global_pose);
-            std::unique_lock<std::mutex> graph_guard_3(mtxPosegraph);
-            newFactors.emplace_shared<PriorFactor<Pose3>>(X(curr_node_add_idx), poseGlobal, priorMapPoseNoise);
-            graph_guard_3.unlock();
-            mapIndexContainer[curr_node_idx] = curr_node_idx;
-        }
+        Pose3 poseGlobal = Pose6dTogtsamPose3(keyMeasures.at(curr_node_idx).global_pose);
+        std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
+        oldGraph.emplace_shared<PriorFactor<Pose3>>(X(curr_node_add_idx), poseGlobal, priorMapPoseNoise);
+        graph_guard.unlock();
+        mapIndexContainer[curr_node_idx] = curr_node_idx;
+        std::cout << BOLDGREEN <<"[INFO] Added global prior factor: " << curr_node_add_idx << std::endl;
     }
 }
 
@@ -815,6 +819,7 @@ bool MSMapping::SyncData(Measurement &measurement)
             measurement.imu_deque.push_back(imuQueue.front());
             imuQueue.pop_front();
         }
+        imu_guard.unlock();
     }
 
     return true;
@@ -954,7 +959,7 @@ void MSMapping::VisualizationThread()
     {
         rate.sleep();
         PubMap();
-        if (useLoopCloser)
+        if (useLoopClosure)
         {
             VisualizeLoopConstrains(loopIndexCheckedMap, pubLoopConstraintEdge, 0);
         }
@@ -1609,59 +1614,17 @@ void MSMapping::VisualizeLoopConstrains(std::map<int, std::vector<int>> loopMap,
 
 bool MSMapping::GetGlobalICP(Measurement &measurement_temp)
 {
-    // use this pose, do ndt
-    Pose3 poseGlobalPre =
-        Pose6dTogtsamPose3(keyMeasures.at(prev_node_idx).global_pose);
-
-    NavState predictState(prevPose, prevVel);
-    NavState predictGlobalState(poseGlobalPre, prevVel);
-    NavState prevGlobalState(poseGlobalPre, prevVel);
-
-    if (0)
-    {
-        std::cout << BOLDCYAN << "prevPose: " << prevPose.translation().transpose()
-                  << std::endl;
-        std::cout << BOLDCYAN
-                  << "prevGlobalPose: " << poseGlobalPre.translation().transpose()
-                  << std::endl;
-        //    std::cout << BOLDCYAN << "predictGlobalState: "
-        //              << predictGlobalState.pose().translation().transpose()
-        //              << std::endl;
-        std::cout << BOLDCYAN << "predictState: "
-                  << propState.pose().translation().transpose() << std::endl;
-    }
     Eigen::Matrix4d guess_matrix = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d final_trans = Eigen::Matrix4d::Identity();
-
-    // use pgo pose
-    //     guess_matrix = Pose6D2Matrix(measurement_temp.updated_pose).matrix();
-    // use previou global pose
-    // guess_matrix = predictGlobalState.pose().matrix();
-    // use predict pose by pgo
-    //    guess_matrix = predictState.pose().matrix();
-    //    guess_matrix = (prevPose).matrix();
     guess_matrix = predict_pose.matrix();
-    //    guess_matrix = predictGlobalState.pose().matrix();
-    //
 
     // Extract the local map
     pcl::PointCloud<pcl::PointXYZI>::Ptr temp_map(new pcl::PointCloud<pcl::PointXYZI>);
-    pcl::copyPointCloud(*globalmap_filter_ptr, *temp_map);
-    // VoxelGrid downsampling
-    pcl::VoxelGrid<pcl::PointXYZI> sor;
-    sor.setInputCloud(temp_map);
-    sor.setLeafSize(0.5, 0.5, 0.5);
-    sor.filter(*temp_map);
+    pcl::copyPointCloud(*globalmap_ptr, *temp_map);
     pcl::PointCloud<pcl::PointXYZI>::Ptr local_map = cloud_process_.extractLocalMap(temp_map, predict_pose.matrix(), 80);
-    std::cout << "Extracted " << local_map->size() << " points from global map. " << globalmap_filter_ptr->size()
-              << std::endl;
 
-    //    pcl::PointCloud<PointT>::Ptr crop_cloud_map(new pcl::PointCloud<PointT>());
-    //    cloud_process_.CropGlobalCloud(globalmap_filter_extracted_ptr, crop_cloud_map, guess_matrix,
-    //                                   Eigen::Vector3d(100, 100, 100));
-    if (local_map->empty())
-        return false;
-    publishCloud(pubLaserCloudCrop, local_map, ros::Time::now(), odom_link);
+    if (local_map->empty() || local_map->size() < 1000) return false;
+    // publishCloud(pubLaserCloudCrop, local_map, ros::Time::now(), odom_link);
 
     bool useOpen3d = true;
     double score = 9999999;
@@ -1673,7 +1636,7 @@ bool MSMapping::GetGlobalICP(Measurement &measurement_temp)
 
         TicToc tic;
         pipelines::registration::RegistrationResult icp;
-        auto criteria = pipelines::registration::ICPConvergenceCriteria(20);
+        auto criteria = pipelines::registration::ICPConvergenceCriteria(10);
         switch (method)
         {
         case 0: // point-to-point icp
@@ -1683,24 +1646,21 @@ bool MSMapping::GetGlobalICP(Measurement &measurement_temp)
                 criteria);
             break;
         case 1: // Point-to-plane
-            source_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 5));
-            target_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 5));
+            target_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 10));
             icp = pipelines::registration::RegistrationICP(
                 *source_o3d, *target_o3d, 1.0, guess_matrix.cast<double>(),
                 pipelines::registration::TransformationEstimationPointToPlane(),
                 criteria);
             break;
         case 2:
-            source_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 5));
-            target_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 5));
+            target_o3d->EstimateNormals(geometry::KDTreeSearchParamHybrid(2.0, 10));
             icp = pipelines::registration::RegistrationGeneralizedICP(
                 *source_o3d, *target_o3d, 1.0, guess_matrix.cast<double>(),
-                pipelines::registration::
-                    TransformationEstimationForGeneralizedICP(),
+                pipelines::registration::TransformationEstimationForGeneralizedICP(),
                 criteria);
             break;
         default:
-            std::cout << " evaluation error type!!!!! " << std::endl;
+            std::cout << "evaluation error type!!!!! " << std::endl;
             break;
         }
 
@@ -1712,37 +1672,10 @@ bool MSMapping::GetGlobalICP(Measurement &measurement_temp)
         measurement_temp.global_pose = Matrix2Pose6D(final_trans);
         measurement_temp.global_score = score;
 
-        // 使用 EigenMatrixToTensor 转换 Eigen 矩阵到 Open3D Tensor
-        open3d::core::Tensor transformation_tensor = open3d::core::eigen_converter::EigenMatrixToTensor(
-            icp.transformation_);
-        double max_correspondence_distance = 1.0;
-        open3d::t::geometry::PointCloud source_o3d_new = open3d::t::geometry::PointCloud::FromLegacy(*source_o3d);
-        open3d::t::geometry::PointCloud target_o3d_new = open3d::t::geometry::PointCloud::FromLegacy(*target_o3d);
-        open3d::core::Tensor information_matrix = open3d::t::pipelines::registration::GetInformationMatrix(
-            source_o3d_new,
-            target_o3d_new,
-            max_correspondence_distance,
-            transformation_tensor);
-        Eigen::MatrixXd information_matrix_eigen = open3d::core::eigen_converter::TensorToEigenMatrixXd(
-            information_matrix);
-        if (information_matrix_eigen.rows() == 6 && information_matrix_eigen.cols() == 6)
-        {
-            icp_cov = information_matrix_eigen.inverse().cast<float>() * 1e-3;
-        }
-        else
-        {
-            // 处理错误情况：信息矩阵不是 6x6 矩阵
-            std::cerr << "Information matrix is not 6x6. Cannot compute covariance matrix." << std::endl;
-        }
-        std::cout << "O3D MAP COV: \n"
-                  << icp_cov.diagonal().transpose() * 1e6 << std::endl;
-
         // publish global odomertry
         if (1)
         {
-            std::cout << BOLDMAGENTA << "Global ICP ALIGNED POINTS: "
-                      << measurement_temp.lidar->size()
-                      << " " << local_map->size() << " "
+            std::cout << BOLDMAGENTA << "Global ICP ALIGNED POINTS SUCCESS: "<< measurement_temp.lidar->size()  << " " << local_map->size() << " "
                       << score << " " << overlap << std::endl;
         }
         if (score == 0.0 || score > 0.3 || overlap < 0.8)

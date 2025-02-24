@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 
     // Thread for loop closure detection; only start if loop closure is enabled.
     std::thread lc_detection;
-    if (useLoopCloser)
+    if (useLoopClosure)
     {
         lc_detection = std::thread([&]()
                                    {

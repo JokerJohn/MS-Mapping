@@ -484,7 +484,7 @@ struct ICPResult {
 
 extern bool useGPS;
 extern bool useScancontext;
-extern bool useLoopCloser;
+extern bool useLoopClosure;
 extern bool saveResultBag;
 extern bool saveResultBodyFrame;
 extern int method;

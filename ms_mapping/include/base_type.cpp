@@ -286,7 +286,7 @@ bool useGPS;
 bool saveKeyFrame;
 bool useFixedCov;
 bool useScancontext;
-bool useLoopCloser;
+bool useLoopClosure;
 bool saveResultBag;
 bool saveResultBodyFrame;
 bool useImuFrame;
@@ -390,7 +390,7 @@ void LoadRosParams(ros::NodeHandle &nh)
 
     nh.param<std::string>("common/sequence", sequence, "exp05");
     nh.param<std::string>("common/odom_link", odom_link, "camera_init");
-    nh.param<bool>("common/useLoopCloser", useLoopCloser, false);
+    nh.param<bool>("common/useLoopClosure", useLoopClosure, false);
 
     // if we use scan context
     nh.param<bool>("common/useScancontext", useScancontext, false);
