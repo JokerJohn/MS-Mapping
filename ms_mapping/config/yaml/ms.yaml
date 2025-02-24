@@ -18,15 +18,15 @@ common:
   map_saved_size: 0.1
 
   useImuFrame: false                        # when we use imu frame, we will get dense color cloud
-  useLoopCloser: true                      # if we enable loop clouser
+  useLoopCloser: true                       # if we enable loop closure
 
   # save data
   saveResultBodyFrame: true
-  saveLoopdata: false                     # useless, just preparing for the new algo
-  saveKeyFrame: true                      # if save keyframe pcd
+  saveLoopdata: false                       # useless, just preparing for the new algo
+  saveKeyFrame: true                        # if save keyframe pcd
   
 
-  # PK01-RB02
+  # PK01-RB02, use cloudcompare or place recognition algorisms to generate the initial pose
   initial_pose: [ 0.993152, 0.116221, -0.011903 ,0.186796,
                   -0.116688, 0.991792, -0.052270, -0.104891,
                   0.005731, 0.053301 ,0.998562, -0.118102,
@@ -46,7 +46,7 @@ lio:
   point_filter_num: 4
   max_iteration: 3
   filter_size_corner: 0.2
-  filter_size_surf: 0.5
+  filter_size_surf: 0.5                 # 0.1-0.2 for indooor
   filter_size_map: 0.5
   cube_side_length: 1000
 
@@ -59,7 +59,8 @@ pgo:
   
   useRawCloud: true
   method: 2                                       # ICP for Loop closure. 0: icp 1:point2plane 2:gicp
-  baseline: 0                                     #0:F2F; 1:M2F
+  baseline: 0                                     # 0:F2F; 
+  useMultiMode: true                              # true for multi-session, false for single session
 
   loopZOffset: 5.0                                # for escaltor
   historyKeyframeSearchRadius: 25.0
@@ -68,5 +69,5 @@ pgo:
   loopFitnessScoreThreshold: 0.3
   loopClosureFrequency: 0.5                       # if you want to detect more loop, you can set it larger
 
-  filterDis: 2.0      # we did not add loop if the distance of consecutive node less than 10m
-  filterNodeNum: 10   # we did noot detect loop every 10 nodes for ecah loop detetcion method
+  filterDis: 2.0                                  # we did not add loop if the distance of consecutive node less than 10m
+  filterNodeNum: 10                               # we did noot detect loop every 10 nodes for ecah loop detetcion method

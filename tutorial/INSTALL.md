@@ -6,6 +6,10 @@
    | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
    | ![image (17)](./INSTALL/image%20(17).png)                    | ![image-20250116000038243](./INSTALL/image-20250116000038243.png) | ![image-20250223170438039](./INSTALL/image-20250223170438039.png) |
 
+ You can also use the single session mode to generate the map data of the [old session](https://ramlab-ust.direct.quickconnect.to:5001/sharing/t9SM1iPZr), just set parameters `useMultiMode` as false. Check the map folder, three files must exists, `key_point_frame`, `pose_graph.g2o` and `optimized_poses_tum.txt`.
+
+![image-20250224125924133](./INSTALL/image-20250224125924133.png)
+
 2. set important parameters of file path: `save_directory`, `map_directory`,`bag_path`.
 
    ```launch

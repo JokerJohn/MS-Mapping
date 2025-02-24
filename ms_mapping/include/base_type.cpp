@@ -452,7 +452,7 @@ void LoadRosParams(ros::NodeHandle &nh)
     // if we need to save key frame
     nh.param<int>("pgo/SKIP_FRAMES", SKIP_FRAMES, 5);
     nh.param<bool>("pgo/useRawCloud", useRawCloud, false);
-    nh.param<bool>("pgo/useKeyframe", useKeyframe, false);
+    nh.param<bool>("pgo/useKeyframe", useKeyframe, true);
     nh.param<bool>("pgo/useGlobalPrior", useGlobalPrior, true);
     nh.param<int>("pgo/baseline", baseline, 0);
     nh.param<bool>("pgo/useMultiMode", useMultiMode, true);

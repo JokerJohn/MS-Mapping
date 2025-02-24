@@ -35,18 +35,19 @@ void MSMapping::pose_slam()
             TicToc tic;
 
             // Measure the time for saving keyframe radius.
-            if (!SaveKeyframeRadius(dtf)) continue;
+            if (!SaveKeyframeRadius(dtf))
+                continue;
             t1 = tic.toc();
             t1_all += t1;
         }
 
-        // Update the measurement with computed distance and key pose.
-        measurement_curr.distance = sqrt(dtf.x * dtf.x + dtf.y * dtf.y + dtf.z * dtf.z);
-        measurement_curr.key_pose = pose_curr;
-        measurement_curr.updated_pose = pose_curr;
-
         // Lock keyframe data and update both keyMeasures and oldMeasurements.
         {
+            // Update the measurement with computed distance and key pose.
+            measurement_curr.distance = sqrt(dtf.x * dtf.x + dtf.y * dtf.y + dtf.z * dtf.z);
+            measurement_curr.key_pose = pose_curr;
+            measurement_curr.updated_pose = pose_curr;
+
             std::unique_lock<std::mutex> kf_guard(mKF);
             keyMeasures.push_back(measurement_curr);     // New frame only.
             oldMeasurements.push_back(measurement_curr); // All frames.
@@ -59,11 +60,6 @@ void MSMapping::pose_slam()
         curr_node_add_idx = oldMeasurements.size() - 1;
         prev_node_add_idx = curr_node_add_idx - 1;
 
-        // Debug info (preserved for future use):
-        // std::cout << "Add measurements in old measurements: " << keyMeasures.size() << " " << oldMeasurements.size()
-        //           << " " << prev_node_add_idx << "->" << curr_node_add_idx << " " << prev_node_idx << "->"
-        //           << curr_node_idx << std::endl;
-        // std::cout << "NODE DIFF: " << curr_node_add_idx - curr_node_idx << std::endl;
 
         // Retrieve the current state from LIO2 and update key state history.
         lioState2 = GetStateFromLIO2(curr_node_idx);
@@ -157,7 +153,6 @@ void MSMapping::InitParmeters()
     // Initialize various point cloud and KD-tree pointers.
     kdtreeHistoryKeyPoses.reset(new pcl::KdTreeFLANN<pcl::PointXYZ>());
     kdtreeSurfFromMap.reset(new pcl::KdTreeFLANN<PointT>());
-    kdtreeSurfFromLocalmap.reset(new pcl::KdTreeFLANN<PointT>());
     laserCloudMapPGO.reset(new pcl::PointCloud<PointT>());
     globalmap_ptr.reset(new pcl::PointCloud<PointT>());
     globalmap_filter_ptr.reset(new pcl::PointCloud<PointT>());
@@ -165,7 +160,7 @@ void MSMapping::InitParmeters()
 
     // For multi-session mapping mode, load the global map for relocalization.
     if (useMultiMode)
-    {       
+    {
         // Check for consistency between old graph and measurements.
         TicToc ticToc;
         oldGraph = dataSaverPtr->BuildFactorGraph(mapDirectory + "pose_graph.g2o", oldValues);
@@ -176,7 +171,7 @@ void MSMapping::InitParmeters()
             std::cout << BOLDRED << "Inconsistency found: graph size (" << oldGraph.size()
                       << ") does not match measurements size (" << oldMeasurements.size() << ")" << std::endl;
         }
-        if(globalmap_ptr->empty())
+        if (globalmap_ptr->empty())
         {
             std::cout << BOLDRED << "Failed to load empty map!" << std::endl;
             ros::shutdown();
@@ -229,18 +224,25 @@ void MSMapping::InitParmeters()
 void MSMapping::InitSystem(Measurement &measurement)
 {
     using namespace open3d;
+    using namespace gtsam;
     std::cout << "[INFO] MS-Mapping: Waiting for initial pose..." << std::endl;
+
+    Pose6D pose_origin = getOdom(measurement_curr.odom);
+    Pose3 pose3_origin = Pose6dTogtsamPose3(pose_origin);
+    measurement.key_pose = pose_origin;
+    measurement.updated_pose = pose_origin;
 
     // If multi-session mapping is not enabled, use identity pose.
     if (!useMultiMode)
     {
         initialPose = Eigen::Matrix4d::Identity();
         isInitialized = true;
+        AddInitialPoseFactor(measurement);
         std::cout << "[WARN] Multi-session mode disabled. Using identity pose." << std::endl;
         return;
     }
 
-    // Convert and save the initial cloud.
+    // Convert and save the initial cloud. Just for using cloudcompare to generate the initial pose.
     pcl::PointCloud<PointT>::Ptr unused_result(new pcl::PointCloud<PointT>());
     std::shared_ptr<geometry::PointCloud> source_o3d = cloud_process_.GetO3dPointCloudFromPCL(*measurement.lidar);
     SaveCloud(measurement.lidar, "_init.pcd");
@@ -295,6 +297,7 @@ void MSMapping::InitSystem(Measurement &measurement)
     }
     else
     {
+        // note that the we have not checked this codes segment, may exists some bugs
         // If an initial pose is received from RVIZ.
         if (poseReceived)
         {
@@ -362,11 +365,10 @@ void MSMapping::AddInitialPoseFactor(int closest_index, Measurement &measurement
     PublishPose(ros::Time().fromSec(measurement.odom_time), pubPoseOdomToMap, odom_link, curr_pose3.matrix());
     std::cout << BOLDRED << "[INFO] Local pose: " << local_pose.translation().transpose() << std::endl;
     std::cout << "[INFO] Current ICP pose: " << curr_pose3.translation().transpose() << std::endl;
-    // std::cout << "Current ICP cov: " << icp_cov.diagonal().transpose() * 1e6 << std::endl;
-    // std::cout << "Local pose cov: " << local_pose_cov.diagonal().transpose() * 1e6 << std::endl;
-    // std::cout << "Current pose cov: " << composition_cov.diagonal().transpose() * 1e6 << std::endl;
-    // SharedNoiseModel noise_model = noiseModel::Gaussian::Covariance(composition_cov);
 
+    //  actually, there's two choice for the initial node.
+    // 1.relative pose factor like a common loop closure constraint. This directly constrain two nodes, and make the graph connected.
+    // 2.prior pose factor like a GNSS constraint. This can only constrain the first node, and the graph is not connected.
     std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
     oldGraph.emplace_shared<BetweenFactor<Pose3>>(X(p_index), X(c_index), prev_pose3.between(curr_pose3), noise_odom_between);
     graph_guard.unlock();
@@ -391,6 +393,33 @@ void MSMapping::AddInitialPoseFactor(int closest_index, Measurement &measurement
 }
 
 //---------------------------------------------------------------------
+// Add Initial Pose Factor to Graph
+//---------------------------------------------------------------------
+void MSMapping::AddInitialPoseFactor(Measurement &measurement)
+{
+    Pose3 poseOrigin = Pose6dTogtsamPose3(measurement.updated_pose);
+
+    std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
+    oldGraph.add(gtsam::PriorFactor<Pose3>(X(0), poseOrigin, priorPoseNoise));
+    oldValues.insert(X(0), poseOrigin);
+    graph_guard.unlock();
+
+    // Add measurement.
+    {
+        std::unique_lock<std::mutex> kf_guard(mKF);
+        oldMeasurements.push_back(measurement);
+        keyMeasures.push_back(measurement);
+    }
+    std::cout << "[INFO] Updated measurements. Keyframes: " << keyMeasures.size()
+              << ", Total measurements: " << oldMeasurements.size() << std::endl;
+
+    // Update LIO state and previous pose.
+    lioState2 = GetStateFromLIO2(0);
+    keyLIOState2.push_back(lioState2);
+    prevPose = poseOrigin;
+}
+
+//---------------------------------------------------------------------
 // Optimize Pose Graph
 //---------------------------------------------------------------------
 void MSMapping::OptimizeGraph()
@@ -409,6 +438,7 @@ void MSMapping::OptimizeGraph()
             {
                 isam->update();
             }
+            // currently, we can not estimate the covariance of pose correctly using F2F method.
             currentEstimate = isam->calculateEstimate();
             poseCovariance = isam->marginalCovariance(X(curr_node_add_idx));
         }
@@ -476,7 +506,8 @@ void MSMapping::AddOdomFactorToOldGraph()
 
 void MSMapping::AddMapPriorFactor()
 {
-    if (curr_node_idx < 1)  return;
+    if (curr_node_idx < 1)
+        return;
 
     TicToc tic_toc;
     useGlobalPrior = true;
@@ -749,33 +780,6 @@ bool MSMapping::SyncData(Measurement &measurement)
         return false;
     }
 
-    /*    {
-            std::unique_lock<std::mutex> data_guard(mutexLock);
-            odom_time = odometryBuf.front()->header.stamp.toSec();
-            cloud_time = fullResBuf.front()->header.stamp.toSec();
-            // Discard old odometry data
-            while (!odometryBuf.empty() && (odom_time < cloud_time - 0.05)) {
-                ROS_WARN("odometry discarded: %f", odom_time - cloud_time);
-                odometryBuf.pop();
-                odom_time = odometryBuf.empty() ? std::numeric_limits<double>::max()
-                                                : odometryBuf.front()->header.stamp.toSec();
-            }
-            // Discard old point cloud data
-            while (!fullResBuf.empty() && (cloud_time < odom_time - 0.05)) {
-                ROS_WARN("pointCloud discarded: %f", cloud_time - odom_time);
-                fullResBuf.pop();
-                cloud_time = fullResBuf.empty() ? std::numeric_limits<double>::max()
-                                                : fullResBuf.front()->header.stamp.toSec();
-            }
-            if (fullResBuf.empty() || odometryBuf.empty()) {
-                return false;
-            }
-            raw_cloud_msg = *(fullResBuf.front());
-            thisOdom = *odometryBuf.front();
-            fullResBuf.pop();
-            odometryBuf.pop();
-        }*/
-
     // Process lidar data...
     // 处理 lidar 数据时重复利用已分配的资源
     pcl::PointCloud<PointT>::Ptr thisKeyFrame(new pcl::PointCloud<PointT>());
@@ -861,7 +865,7 @@ void MSMapping::PubPath()
         adjustedCovariance.block<3, 3>(0, 3) = poseCovariance.block<3, 3>(3, 0); // 平移与旋转之间的协方差
         adjustedCovariance.block<3, 3>(3, 0) = poseCovariance.block<3, 3>(0, 3); // 旋转与平移之间的协方差
         adjustedCovariance.block<3, 3>(3, 3) = poseCovariance.block<3, 3>(0, 0); // 旋转部分
-                                                                                // 将调整后的矩阵赋值给odomAftPGO.pose.covariance
+                                                                                 // 将调整后的矩阵赋值给odomAftPGO.pose.covariance
         for (int i = 0; i < 6; ++i)
         {
             for (int j = 0; j < 6; ++j)
@@ -874,7 +878,7 @@ void MSMapping::PubPath()
     pubOdomAftPGO.publish(odomAftPGO);
     pubPathAftPGO.publish(pathAftPGO);
     pubPathNewpgo.publish(pathNewPGO);
-    
+
     // publish current cloud
     pcl::PointCloud<PointT>::Ptr transform_cloud_ptr(new pcl::PointCloud<PointT>);
     *transform_cloud_ptr = *TransformPointCloud(oldMeasurements[curr_node_add_idx].lidar,
@@ -895,7 +899,7 @@ void MSMapping::PubPath()
     q.setY(odomAftPGO.pose.pose.orientation.y);
     q.setZ(odomAftPGO.pose.pose.orientation.z);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, odomAftPGO.header.stamp,  odom_link, "/aft_pgo"));
+    br.sendTransform(tf::StampedTransform(transform, odomAftPGO.header.stamp, odom_link, "/aft_pgo"));
 }
 
 void MSMapping::PubMap()

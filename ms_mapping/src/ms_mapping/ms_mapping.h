@@ -52,8 +52,6 @@ public:
                     "/base_link2map", 100);
                 pubPoseOdomToMap = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
                     "/odom2map", 100);
-                pubDebugPoseOdom = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
-                    "/debug_odom_initial", 100);
 
                 subImu = nh.subscribe<sensor_msgs::Imu>(imu_topic, 2000,  &MSMapping::ImuCallback, this,
                                                         ros::TransportHints().tcpNoDelay());
@@ -106,8 +104,10 @@ private:
 
         void AddInitialPoseFactor(int closest_index, Measurement &measurement, const Pose3 &icp_pose);
 
-        bool SyncData(Measurement &measurement);
+        void AddInitialPoseFactor(Measurement &measurement); 
 
+        bool SyncData(Measurement &measurement);
+        
         void AddOdomFactorToOldGraph();
 
         void AddMapPriorFactor();
@@ -197,7 +197,7 @@ private:
         ros::Publisher pubPathLIO, pubPathAftPGO, pubLocalizationPath, pubPathBeforPGO, pubPathIMU, pubPathNewpgo;
         ros::Publisher pubLaserCloudSurround, pubLoopScanLocal, pubLoopSubmapLocal, pubGpsConstraintEdge;
         ros::Publisher pubLocalizationmap, pubInitialCloud, pubOldmap;
-        ros::Publisher pubPoseOdomToMap, pubPoseBToMap, pubLaserCloudCrop, pubDebugPoseOdom;
+        ros::Publisher pubPoseOdomToMap, pubPoseBToMap, pubLaserCloudCrop;
 
         ros::Publisher pubLoopConstraintEdge, pubSCLoopConstraintEdge,
             pubGlobalMapConstraintEdge, pubVisualLoopConstraintEdge,
@@ -262,7 +262,6 @@ private:
 
         pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtreeHistoryKeyPoses;
         pcl::KdTreeFLANN<PointT>::Ptr kdtreeSurfFromMap;
-        pcl::KdTreeFLANN<PointT>::Ptr kdtreeSurfFromLocalmap;
         Eigen::Matrix<float, 6, 6> icp_cov;
 
         int iterate_number = 0;
