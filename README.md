@@ -92,7 +92,6 @@ The implementation of baseline method **F2F**, only radius keyframe selection + 
 
 - [ ] Clean codes
 - [ ] Add more dataset support
-- [ ] Add single-session mode
 - [ ] Add baseline methods M2F
 
 ## Citations
