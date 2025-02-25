@@ -83,11 +83,13 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO.
 
-#### Step 1: single session mapping using old session
+#### Step 1: single session mapping using old session to prepare data
 
 #### Step2: incrimental mapping using new session
 
 #### Step3: global map merging
+
+#### Step4: dynamic point cloud removal using [BeautyMap](https://github.com/MKJia/BeautyMap)
 
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
