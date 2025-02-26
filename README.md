@@ -82,19 +82,20 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 ## [Quick Run](tutorial/INSTALL.md)
 
 The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO.
-
-#### Step 1: single session mapping using old session to prepare data
-
-#### Step2: incrimental mapping using new session
-
-#### Step3: global map merging
-
-#### Step4: dynamic point cloud removal using [BeautyMap](https://github.com/MKJia/BeautyMap)
-
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
 
+- Step 1: single session mapping using old session to prepare data
 
+- Step2: incrimental mapping using new session
+
+- Step3: global map merging
+
+- Step4: Lifelong Mapping with [BeautyMap](https://github.com/MKJia/BeautyMap)
+
+| With BeautyMap                         | Ground Truth Map                                |
+| -------------------------------------- | ----------------------------------------------- |
+| ![a07_beauty](./README/a07_beauty.png) | ![a07_gt](./README/a07_gt-1740560022922-11.png) |
 
 ## TO DO
 
