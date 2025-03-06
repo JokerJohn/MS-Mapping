@@ -81,7 +81,7 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 ## [Quick Run](tutorial/INSTALL.md)
 
-The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO.
+The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO. [Tutorial](tutorial/INSTALL.md) is here!
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
 
@@ -93,7 +93,7 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 
 - Step4: Lifelong Mapping with [BeautyMap](https://github.com/MKJia/BeautyMap)
 
-| With BeautyMap                         | Ground Truth Map                                |
+| Clean Map Using BeautyMap              | Ground Truth Map                                |
 | -------------------------------------- | ----------------------------------------------- |
 | ![a07_beauty](./README/a07_beauty.png) | ![a07_gt](./README/a07_gt-1740560022922-11.png) |
 
