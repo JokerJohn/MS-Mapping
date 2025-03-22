@@ -85,13 +85,13 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
 
-- Step 1: single session mapping using old session to prepare data
+- Step 1: using old session with single session mode (`useMultiMode = false`) to prepare data
 
-- Step2: incrimental mapping using new session
+- Step2: incrimental mapping using new session rosbag
 
-- Step3: global map merging
+- Step3: global map merging with giving initial pose (manually from `ClouCompare` or  place recognition methods)
 
-- Step4: Lifelong Mapping with [BeautyMap](https://github.com/MKJia/BeautyMap)
+- Step4: Lifelong Mapping with [BeautyMap](https://github.com/MKJia/BeautyMap) to remove dynamic points.
 
 | Clean Map Using BeautyMap              | Ground Truth Map                                |
 | -------------------------------------- | ----------------------------------------------- |
