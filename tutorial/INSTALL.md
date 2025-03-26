@@ -46,7 +46,7 @@ rosservice call /save_map
 
 ### Map Merging With the third session
 
-| [RB3 data bag](https://github.com/JokerJohn/PALoc)           | [PK1-RB2 results](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/ERsuQfkHh8NEsK2qMfkubngBQuPrWqbxNXD_W6hG08IK_g?e=vdGzgn) | PK1-RB2-RB3 results                                          |
+| [RB3 data bag](https://github.com/JokerJohn/PALoc)           | [PK1-RB2 results](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/ERsuQfkHh8NEsK2qMfkubngBQuPrWqbxNXD_W6hG08IK_g?e=vdGzgn) | [PK1-RB2-RB3 results](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/Ef1WFIyW5nBNnKcWt_MKstkBWfKiRrSmoqw2x5IFJwVqyA?e=2VTfhe) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | ![image-20250122200925827](./INSTALL/image-20250122200925827.png) | ![image-20250327004149392](./INSTALL/image-20250327004149392.png) | ![image-20250327004443119](./INSTALL/image-20250327004443119.png) |
 
