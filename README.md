@@ -12,6 +12,8 @@
 
 <a href="https://arxiv.org/pdf/2408.03723"><img src='https://img.shields.io/badge/ArXiv-MS Mapping-red' alt='Paper PDF'></a><a href="https://www.youtube.com/watch?v=1z8EOhCmegM"><img alt="Youtube" src="https://img.shields.io/badge/Video-Youtube-red"/></a>[![video](https://img.shields.io/badge/Video-Bilibili-74b9ff?logo=bilibili&logoColor=red)](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.999.0.0)[![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
 
+</div>
+
 MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
 - **Distribution-aware keyframe selection**: Captures the contributions of each point cloud frame by analyzing map distribution similarities. This reduces data redundancy and optimizes graph size and speed.
 
@@ -20,8 +22,6 @@ MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scal
 - **Enhanced evaluation**: Redesigned baseline comparisons and benchmarks demonstrate MS-Mapping's superior accuracy over state-of-the-art methods.
 
 Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
-
-</div>
 
 ## News
 - **2025/03/26**: Add new databag `RB3` and new [Tutorial](tutorial/INSTALL.md) ! Feel free to pull issues for any questions related to this work!
