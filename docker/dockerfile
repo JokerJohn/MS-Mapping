@@ -98,4 +98,8 @@ RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \
     echo "  source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
     echo "fi" >> ~/.bashrc
 
+# Include the custom environment setup script
+RUN echo "if [ -f /yride_env_setup/custom_env.sh ]; then" >> ~/.bashrc && \
+    echo "  source /yride_env_setup/custom_env.sh" >> ~/.bashrc && \
+    echo "fi" >> ~/.bashrc
 
