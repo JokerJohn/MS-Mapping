@@ -76,7 +76,21 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 ## [Quick Run](tutorial/INSTALL.md)
 
+#### Install
+
+- Ubuntu 20.04 / ROS Noetic
+
+- *[Open3d ( >= 0.17.0)](https://github.com/isl-org/Open3D)*
+
+- PCL
+
+- [GTSAM 4.2.0](https://github.com/borglab/gtsam/tree/4.2.0)
+
+  
+
+
 The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO. [Tutorial](tutorial/INSTALL.md) is here!
+
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
 
