@@ -76,7 +76,7 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 ## [Quick Run](tutorial/INSTALL.md)
 
-#### Install
+### Install
 
 - Ubuntu 20.04 / ROS Noetic
 
