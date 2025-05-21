@@ -1,0 +1,101 @@
+# Start from a ROS Noetic base image.
+FROM ros:noetic
+
+# Install common build tools and necessary dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    curl \
+    xz-utils \
+    libgoogle-glog-dev \
+    libgflags-dev \
+    libatlas-base-dev \
+    libceres-dev \
+    libboost-all-dev \
+    libeigen3-dev \
+    libpcl-dev \
+    libopencv-dev \
+    libxml2-dev \
+    libyaml-cpp-dev \
+    python3-dev \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Install ROS Dependencies ---
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-noetic-geometry-msgs \
+    ros-noetic-nav-msgs \
+    ros-noetic-sensor-msgs \
+    ros-noetic-roscpp \
+    ros-noetic-rospy \
+    ros-noetic-rosbag \
+    ros-noetic-std-msgs \
+    ros-noetic-image-transport \
+    ros-noetic-cv-bridge \
+    ros-noetic-tf \
+    ros-noetic-message-generation \
+    ros-noetic-catkin \
+    ros-noetic-rviz \
+    ros-noetic-jsk-rviz-plugins \
+    python3-catkin-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Update CMake ---
+# Download and install a newer CMake
+ARG CMAKE_VERSION="3.25.0"
+RUN CMAKE_MAJOR_MINOR=$(echo ${CMAKE_VERSION} | cut -d. -f1-2) && \
+    curl -sL https://cmake.org/files/v${CMAKE_MAJOR_MINOR}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz -o /tmp/cmake.tar.gz && \
+    tar -xzf /tmp/cmake.tar.gz -C /opt/ && \
+    ln -s /opt/cmake-${CMAKE_VERSION}-linux-x86_64 /opt/cmake && \
+    rm /tmp/cmake.tar.gz
+
+# Add the new CMake to the PATH
+ENV PATH="/opt/cmake/bin:${PATH}"
+
+# Verify new CMake version
+RUN cmake --version
+    
+# --- Install GTSAM ---
+ARG GTSAM_VERSION="4.2.0"
+RUN git clone -b ${GTSAM_VERSION} https://github.com/borglab/gtsam.git /opt/gtsam && \
+    cd /opt/gtsam && \
+    mkdir build && cd build && \
+    cmake .. -DGTSAM_BUILD_EXAMPLES=OFF -DGTSAM_BUILD_TESTS=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON && \
+    cd /opt/gtsam/build && \
+    make -j$(($(nproc) / 2 < 1 ? 1 : $(nproc) / 2)) && \
+    make install && \
+    rm -rf /opt/gtsam
+
+# --- Install Open3D ---
+ARG OPEN3D_VERSION="0.19.0"
+RUN git clone -b v${OPEN3D_VERSION} https://github.com/isl-org/Open3D.git /opt/Open3D && \
+    cd /opt/Open3D && ./util/install_deps_ubuntu.sh assume-yes && \
+    mkdir build && cd build && \
+    cmake .. -DBUILD_PYTHON_MODULE=OFF && \
+    make -j$(($(nproc) / 2 < 1 ? 1 : $(nproc) / 2)) && \
+    make install && \
+    rm -rf /opt/Open3D
+
+
+# --- Install matplotlibcpp ---
+RUN git clone https://github.com/lava/matplotlib-cpp.git /opt/matplotlib-cpp
+
+# --- Copy in MS-Mapping Source Code ---
+# Set the working directory
+WORKDIR /root/catkin_ws/src/ms_mapping
+
+# Copy your project source code into the Docker image
+COPY . .
+
+# Build the ROS workspace
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
+    cd /root/catkin_ws && \
+    catkin_make"
+
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \
+    echo "if [ -f ~/catkin_ws/devel/setup.bash ]; then" >> ~/.bashrc && \
+    echo "  source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+    echo "fi" >> ~/.bashrc
+
+

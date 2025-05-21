@@ -1,0 +1,17 @@
+services:
+  msmapping:
+    build:
+      context: ..
+      dockerfile: docker/dockerfile
+    image: ms_mapping
+    container_name: ms_mapping
+    volumes:
+      - ../:/root/catkin_ws/src/ms_mapping/
+      - /tmp/.X11-unix:/tmp/.X11-unix # Needed to display RViz within the container
+    environment:
+      DISPLAY: "${DISPLAY}"
+    working_dir: /root/catkin_ws
+    network_mode: host
+    stdin_open: true
+    tty: true
+    
