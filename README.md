@@ -24,6 +24,8 @@ MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scal
 Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
 
 ## News
+
+- **2025/05/16**: Add docker support which adapted to Ubuntu 24.04 by @[bboyack](https://github.com/bboyack). Also add more databag with accurate GT trajectory and map in MS-dataset ([Google Drive](https://drive.google.com/drive/folders/1wT3sjHGHGy8HB-dYqwGN2AGHQMznIPhW?usp=sharing)).
 - **2025/03/26**: Add new databag `RB3` and new [Tutorial](tutorial/INSTALL.md) ! Feel free to pull issues for any questions related to this work!
 - **2025/02/26**: Baseline methods **F2F** and **M2F** released! [Tutorial](tutorial/INSTALL.md) is here!
 - **2024/08/08**: We released the first version of MS-Mapping on [ArXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/4EUwIMPff)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.337.search-card.all.click) videos. 
