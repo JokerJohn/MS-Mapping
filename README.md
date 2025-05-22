@@ -47,7 +47,15 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 | [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/) | [Newer College](https://ori-drs.github.io/newer-college-dataset/) | [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset) | [MS-Dataset](https://github.com/JokerJohn/MS-Dataset) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------- |
 
+### Download Databag in Ms-Datset (Google Drive)
+
+| [PK01](https://drive.google.com/drive/folders/1oqAmXirR-ZZdkrxPJiXAwqywh5SnBsOX?usp=sharing) | [RB02](https://drive.google.com/drive/folders/1CWnCDCPqy3NV-D_roG_ncKdYSoc4WV0d?usp=sharing) | [RB03](https://drive.google.com/drive/folders/1L4S91SRiDlXiEmeLqllJTJWA6D-Az9xi?usp=sharing) | [CS01](https://drive.google.com/drive/folders/1EijZ2aNSPkXopTdfOTvOkcMqDF502h45?usp=sharing) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [CC01](https://drive.google.com/drive/folders/1uGmKFI-PvrehH67nw6tZ5RpMRfnUpqxe?usp=sharing) | [CP05](https://drive.google.com/drive/folders/11tenufARYbZRbaY6zf0MKDb1WY7-6rsx?usp=sharing) |                                                              | GT Map                                                       |
+
+
 ![image-20240730151834570](./README/image-20240730151834570.png)
+
 
 ### Trajectory Evaluation
 
@@ -86,9 +94,21 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 - [GTSAM 4.2.0](https://github.com/borglab/gtsam/tree/4.2.0)
 
-- CMake > 3.20 (fixed by @[bboyack](https://github.com/bboyack))
+- [CMake](https://cmake.org/download) > 3.20 (fixed by @[bboyack](https://github.com/bboyack))
+
+```bash
+# for cmake update, required by open3d 0.17.0
+cd cmake-<version>
+./configure
+make -j8
+sudo make install
+cmake --version
+```
 
 ### Docker Support  by @[bboyack](https://github.com/bboyack)
+- Ubuntu 24.04
+
+### Baselines
 
 The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO. [Tutorial](tutorial/INSTALL.md) is here!
 
@@ -144,8 +164,11 @@ The code in this project is adapted from the following projects:
 - The odometry  method is adapted from [FAST-LIO2](https://github.com/hku-mars/FAST_LIO).
 - The basic framework for pose graph optimization (PGO) is adapted from [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM).
 
+![Star History Chart](https://api.star-history.com/svg?repos=JokerJohn/MS-Mapping&type=Date)
+
 ## Contributors
 
 <a href="https://github.com/JokerJohn/MS-Mapping/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=JokerJohn/MS-Mapping" />
 </a>
+
