@@ -25,7 +25,7 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 ## News
 - **2025/03/26**: Add new databag `RB3` and new [Tutorial](tutorial/INSTALL.md) ! Feel free to pull issues for any questions related to this work!
-- **2025/02/26**: Baseline method **F2F** and **M2F** released! [Tutorial](tutorial/INSTALL.md) is here!
+- **2025/02/26**: Baseline methods **F2F** and **M2F** released! [Tutorial](tutorial/INSTALL.md) is here!
 - **2024/08/08**: We released the first version of MS-Mapping on [ArXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/4EUwIMPff)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.337.search-card.all.click) videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
@@ -86,9 +86,9 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 
 - [GTSAM 4.2.0](https://github.com/borglab/gtsam/tree/4.2.0)
 
-### Docker Support
+- CMake > 3.20 (fixed by @[bboyack](https://github.com/bboyack))
 
-
+### Docker Support  by @[bboyack](https://github.com/bboyack)
 
 The implementation of baseline method **F2F** and **M2F**, only radius keyframe selection + fix-cov PGO. [Tutorial](tutorial/INSTALL.md) is here!
 
