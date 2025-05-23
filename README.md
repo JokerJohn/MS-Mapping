@@ -23,6 +23,8 @@ MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scal
 
 Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
 
+## [Tutorial](tutorial/INSTALL.md) Here !!!!
+
 ## News
 
 - **2025/05/16**: Add docker support which adapted to Ubuntu 24.04 by @[bboyack](https://github.com/bboyack). Also add more databag with accurate GT trajectory and map in MS-dataset ([Google Drive](https://drive.google.com/drive/folders/1wT3sjHGHGy8HB-dYqwGN2AGHQMznIPhW?usp=sharing)).
@@ -79,11 +81,11 @@ we use [MapEval](https://github.com/JokerJohn/Cloud_Map_Evaluation) for this map
 
 ### Time Analysis
 
+To plot the results, you can follow this [scripts](https://github.com/JokerJohn/SLAMTools/blob/main/Run_Time_analysis/time_analysis.py).
+
 <div align="center">
 
 ![image-20240711111322055](./README/image-20240711111322055.png)
-
-To plot the results, you can follow this [scripts](https://github.com/JokerJohn/SLAMTools/blob/main/Run_Time_analysis/time_analysis.py).
 </div>
 
 ## [Quick Run](tutorial/INSTALL.md)
@@ -91,13 +93,9 @@ To plot the results, you can follow this [scripts](https://github.com/JokerJohn/
 ### Install
 
 - Ubuntu 20.04 / ROS Noetic
-
 - *[Open3d ( >= 0.17.0)](https://github.com/isl-org/Open3D)*
-
 - PCL
-
 - [GTSAM 4.2.0](https://github.com/borglab/gtsam/tree/4.2.0)
-
 - [CMake](https://cmake.org/download) > 3.20 (fixed by @[bboyack](https://github.com/bboyack))
 
 ```bash
@@ -136,6 +134,7 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 - [ ] Clean codes
 - [ ] Add more dataset support
 - [ ] Add place recognition algothem for initialization
+- [ ] Add GNSS support. (user can refer to [LIO_SAM_6AXIS](https://github.com/JokerJohn/LIO_SAM_6AXIS) to merge this codes)
 
 ## Citations
 
