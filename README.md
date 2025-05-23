@@ -32,11 +32,6 @@ MS-Mapping is a multi-session LiDAR mapping system designed for large-scale envi
 
 ## [Tutorial](tutorial/INSTALL.md) Here !!!!
 
-#### Download Test Data in Ms-Datset (Google Drive)
-
-| [GT Map](https://drive.google.com/file/d/1UzItYI538MtaruZxXWqExKeWL_ibBJVk/view?usp=sharing) | [PK01](https://drive.google.com/drive/folders/1oqAmXirR-ZZdkrxPJiXAwqywh5SnBsOX?usp=sharing) | [CP05](https://drive.google.com/drive/folders/11tenufARYbZRbaY6zf0MKDb1WY7-6rsx?usp=sharing) | [RB02](https://drive.google.com/drive/folders/1CWnCDCPqy3NV-D_roG_ncKdYSoc4WV0d?usp=sharing) | [RB03](https://drive.google.com/drive/folders/1L4S91SRiDlXiEmeLqllJTJWA6D-Az9xi?usp=sharing) | [CS01](https://drive.google.com/drive/folders/1EijZ2aNSPkXopTdfOTvOkcMqDF502h45?usp=sharing) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|                                                              | [**CC01**](https://drive.google.com/drive/folders/1uGmKFI-PvrehH67nw6tZ5RpMRfnUpqxe?usp=sharing) |                                                              |                                                              |                                                              | [merged results for 8 sessions](http://gofile.me/4jm56/4EUwIMPff) |
 
 <div align="center">
 
@@ -54,6 +49,12 @@ MS-Mapping is a multi-session LiDAR mapping system designed for large-scale envi
 
 | [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/) | [Newer College](https://ori-drs.github.io/newer-college-dataset/) | [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset) | [MS-Dataset](https://github.com/JokerJohn/MS-Dataset) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------- |
+
+#### Download Test Data in Ms-Datset (Google Drive)
+
+| [GT Map](https://drive.google.com/file/d/1UzItYI538MtaruZxXWqExKeWL_ibBJVk/view?usp=sharing) | [PK01](https://drive.google.com/drive/folders/1oqAmXirR-ZZdkrxPJiXAwqywh5SnBsOX?usp=sharing) | [CP05](https://drive.google.com/drive/folders/11tenufARYbZRbaY6zf0MKDb1WY7-6rsx?usp=sharing) | [RB02](https://drive.google.com/drive/folders/1CWnCDCPqy3NV-D_roG_ncKdYSoc4WV0d?usp=sharing) | [RB03](https://drive.google.com/drive/folders/1L4S91SRiDlXiEmeLqllJTJWA6D-Az9xi?usp=sharing) | [CS01](https://drive.google.com/drive/folders/1EijZ2aNSPkXopTdfOTvOkcMqDF502h45?usp=sharing) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Merged results for 8 sessions](http://gofile.me/4jm56/4EUwIMPff) | [**CC01**](https://drive.google.com/drive/folders/1uGmKFI-PvrehH67nw6tZ5RpMRfnUpqxe?usp=sharing) |                                                              |                                                              |                                                              |                                                              |
 
 
 ![image-20240730151834570](./README/image-20240730151834570.png)
