@@ -115,11 +115,16 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 | ![image-20250224132731689](./README/image-20250224132731689.png) |
 | ------------------------------------------------------------ |
 
-- Step 1: using old session with single session mode (`useMultiMode = false`) to prepare data
+- Step 1: using old session with single session mode (`useMultiMode = false`) to prepare data (e.g., PK1).
 
-- Step2: incrimental mapping using new session rosbag
+- Step2: incrimental mapping using new session rosbag (e.g., RB2).
 
-- Step3: global map merging with giving initial pose (manually from `ClouCompare` or  place recognition methods)
+- Step3: global map merging with giving initial pose (manually from `ClouCompare` or  place recognition methods), e.g. PK1-RB2.
+
+| [PK1](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/EcoaRBlVdEhMkB4z0jyHkmQBO2feRKSono_fSsVkkCZNOg?e=a8S0SB) | [PK1-RB2](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/ERsuQfkHh8NEsK2qMfkubngBQuPrWqbxNXD_W6hG08IK_g?e=vdGzgn) | [PK1-RB2-RB3](https://hkustconnect-my.sharepoint.com/:u:/g/personal/xhubd_connect_ust_hk/Ef1WFIyW5nBNnKcWt_MKstkBWfKiRrSmoqw2x5IFJwVqyA?e=2VTfhe) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![image-20250224125924133](./README/image-20250224125924133-1747990735214-1.png) | ![image-20250224012231920](tutorial/INSTALL/image-20250224012231920.png) | ![image-20250327001529771](tutorial/INSTALL/image-20250327001529771.png) |
+
 
 - Step4: Lifelong Mapping with [BeautyMap](https://github.com/MKJia/BeautyMap) to remove dynamic points.
 
@@ -132,7 +137,7 @@ The implementation of baseline method **F2F** and **M2F**, only radius keyframe 
 - [ ] Clean codes
 - [ ] Add more dataset support
 - [ ] Add place recognition algothem for initialization
-- [ ] Add GNSS support. (user can refer to [LIO_SAM_6AXIS](https://github.com/JokerJohn/LIO_SAM_6AXIS) to merge this codes)
+- [ ] Add GNSS support. (users can refer to [LIO_SAM_6AXIS](https://github.com/JokerJohn/LIO_SAM_6AXIS) to merge this codes)
 
 ## Citations
 
