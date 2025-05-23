@@ -8,22 +8,18 @@
 
 <sup>1</sup>HKUST&emsp;&emsp;&emsp;<sup>2</sup>UCL&emsp;&emsp;&emsp;<sup>3</sup>BIT  
 <br>
-&dagger;project lead&emsp;*corresponding author
+&dagger;Project lead&emsp;*Corresponding author
 
 <a href="https://arxiv.org/pdf/2408.03723"><img src='https://img.shields.io/badge/ArXiv-MS Mapping-red' alt='Paper PDF'></a><a href="https://www.youtube.com/watch?v=1z8EOhCmegM"><img alt="Youtube" src="https://img.shields.io/badge/Video-Youtube-red"/></a>[![video](https://img.shields.io/badge/Video-Bilibili-74b9ff?logo=bilibili&logoColor=red)](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.999.0.0)[![GitHub Stars](https://img.shields.io/github/stars/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/stargazers) [![GitHub Issues](https://img.shields.io/github/issues/JokerJohn/MS-Mapping.svg)](https://github.com/JokerJohn/MS-Mapping/issues)[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)<a href="https://github.com/JokerJohn/MS-Mapping/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
 
 </div>
 
-MS-Mapping is a novel multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
+MS-Mapping is a multi-session LiDAR mapping system designed for large-scale environments. It addresses challenges in data redundancy, robustness, and accuracy with three key innovations:
 - **Distribution-aware keyframe selection**: Captures the contributions of each point cloud frame by analyzing map distribution similarities. This reduces data redundancy and optimizes graph size and speed.
 
 - **Uncertainty model**: Automatically adjusts using the covariance matrix during graph optimization, enhancing precision and robustness without scene-specific tuning. It monitors pose uncertainty to avoid ill-posed optimizations.
 
 - **Enhanced evaluation**: Redesigned baseline comparisons and benchmarks demonstrate MS-Mapping's superior accuracy over state-of-the-art methods.
-
-Applications include surveying, autonomous driving, crowd-sourced mapping, and multi-agent navigation.
-
-## [Tutorial](tutorial/INSTALL.md) Here !!!!
 
 ## News
 
@@ -33,6 +29,14 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 - **2024/08/08**: We released the first version of MS-Mapping on [ArXiv](https://arxiv.org/pdf/2408.03723), together with the example [merged data](http://gofile.me/4jm56/4EUwIMPff)  and related [YouTube](https://www.youtube.com/watch?v=1z8EOhCmegM) and [bilibili](https://www.bilibili.com/video/BV1RW42197mV/?spm_id_from=333.337.search-card.all.click) videos. 
 - **2024/07/19**: accepted by [ICRA@40](https://icra40.ieee.org/) as a [extended abstract](https://arxiv.org/pdf/2406.02096).
 - **2024/06/03**: submit to a [workshop](https://arxiv.org/html/2406.02096v1).
+
+## [Tutorial](tutorial/INSTALL.md) Here !!!!
+
+#### Download Test Data in Ms-Datset (Google Drive)
+
+| [GT Map](https://drive.google.com/file/d/1UzItYI538MtaruZxXWqExKeWL_ibBJVk/view?usp=sharing) | [PK01](https://drive.google.com/drive/folders/1oqAmXirR-ZZdkrxPJiXAwqywh5SnBsOX?usp=sharing) | [CP05](https://drive.google.com/drive/folders/11tenufARYbZRbaY6zf0MKDb1WY7-6rsx?usp=sharing) | [RB02](https://drive.google.com/drive/folders/1CWnCDCPqy3NV-D_roG_ncKdYSoc4WV0d?usp=sharing) | [RB03](https://drive.google.com/drive/folders/1L4S91SRiDlXiEmeLqllJTJWA6D-Az9xi?usp=sharing) | [CS01](https://drive.google.com/drive/folders/1EijZ2aNSPkXopTdfOTvOkcMqDF502h45?usp=sharing) |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              | [**CC01**](https://drive.google.com/drive/folders/1uGmKFI-PvrehH67nw6tZ5RpMRfnUpqxe?usp=sharing) |                                                              |                                                              |                                                              |                                                              |
 
 <div align="center">
 
@@ -50,12 +54,6 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 | [Fusion Portable V2 Dataset](https://fusionportable.github.io/dataset/fusionportable_v2/) | [Newer College](https://ori-drs.github.io/newer-college-dataset/) | [Urban-Nav](https://github.com/IPNL-POLYU/UrbanNavDataset) | [MS-Dataset](https://github.com/JokerJohn/MS-Dataset) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------- |
-
-### Download Data in Ms-Datset (Google Drive)
-
-| [PK01](https://drive.google.com/drive/folders/1oqAmXirR-ZZdkrxPJiXAwqywh5SnBsOX?usp=sharing) | [RB02](https://drive.google.com/drive/folders/1CWnCDCPqy3NV-D_roG_ncKdYSoc4WV0d?usp=sharing) | [RB03](https://drive.google.com/drive/folders/1L4S91SRiDlXiEmeLqllJTJWA6D-Az9xi?usp=sharing) | [CS01](https://drive.google.com/drive/folders/1EijZ2aNSPkXopTdfOTvOkcMqDF502h45?usp=sharing) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [CC01](https://drive.google.com/drive/folders/1uGmKFI-PvrehH67nw6tZ5RpMRfnUpqxe?usp=sharing) | [CP05](https://drive.google.com/drive/folders/11tenufARYbZRbaY6zf0MKDb1WY7-6rsx?usp=sharing) |                                                              | [GT Map](https://drive.google.com/file/d/1UzItYI538MtaruZxXWqExKeWL_ibBJVk/view?usp=sharing) |
 
 
 ![image-20240730151834570](./README/image-20240730151834570.png)
