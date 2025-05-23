@@ -68,6 +68,8 @@ Applications include surveying, autonomous driving, crowd-sourced mapping, and m
 
 ### Map Evaluation
 
+we use [MapEval](https://github.com/JokerJohn/Cloud_Map_Evaluation) for this map evaluation.
+
 <div align="center">
 
 | ![image-20240730152951528](./README/image-20240730152951528.png) |
