@@ -1203,9 +1203,8 @@ bool MSMapping::FilterLoopPairs(int loopKeyCur, int loopKeyPre)
         return false;
 
     // short time
-    if (abs(oldMeasurements.at(loopKeyCur).odom_time -
-                abs(oldMeasurements.at(loopKeyPre).odom_time) <
-            historyKeyframeSearchTimeDiff))
+    if (std::abs(oldMeasurements.at(loopKeyCur).odom_time -
+         oldMeasurements.at(loopKeyPre).odom_time) < historyKeyframeSearchTimeDiff)
         return false;
 
     // the loop pairs exits in the icp detect container
