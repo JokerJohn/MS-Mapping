@@ -1249,6 +1249,7 @@ void DataSaver::ReadPosesAndPointClouds(const std::string &tum_file, const std::
     for (size_t index = 0; index < measurements.size(); index++)
     {
         pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>());
+        pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_world(new pcl::PointCloud<pcl::PointXYZI>());
         std::string file_name = cloud_directory + std::to_string(index) + ".pcd";
         int read = pcl::io::loadPCDFile<pcl::PointXYZI>(file_name, *cloud);
         if (read == -1)
@@ -1265,8 +1266,8 @@ void DataSaver::ReadPosesAndPointClouds(const std::string &tum_file, const std::
 
         Pose3 pose = Pose6dTogtsamPose3(measurements.at(index).updated_pose);
         Eigen::Matrix4f transformation = pose.matrix().cast<float>();
-        transformPointCloud(*cloud, *cloud, transformation);
-        *globalmap_ptr += *cloud;
+        transformPointCloud(*cloud, *cloud_world, transformation);
+        *globalmap_ptr += *cloud_world;
         if (index % 1000 == 0)
             std::cout << "read pcd: " << file_name << " " << index << std::endl;
     }
