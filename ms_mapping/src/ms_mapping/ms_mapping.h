@@ -4,6 +4,8 @@
 #include "../cloud_process.h"
 #include "../data_saver.h"
 
+#include <GeographicLib/LocalCartesian.hpp>
+
 using namespace gtsam;
 using namespace open3d;
 
@@ -75,6 +77,14 @@ public:
                 subInitialPose = nh.subscribe("/initialpose", 10000,
                                               &MSMapping::InitialCallback, this);
 
+                // GNSS fusion: subscribe to the ENU odometry produced by simple_gps_odom.
+                if (useGPS) {
+                    subGPS = nh.subscribe<nav_msgs::Odometry>(
+                        "/gps_odom", 200, &MSMapping::GpsCallback, this,
+                        ros::TransportHints().tcpNoDelay());
+                    ROS_INFO("[ms_mapping] GPS fusion enabled, subscribing /gps_odom");
+                }
+
                 // load prior pose
                 nh.param<vector<double>>("common/initial_pose", initial_pose_vector,  vector<double>());
 
@@ -112,6 +122,12 @@ private:
         void AddOdomFactorToOldGraph();
 
         void AddMapPriorFactor();
+
+        void AddGPSFactor();
+
+        bool SyncGPS(nav_msgs::Odometry &alignedGps, double timestamp, double eps);
+
+        void GpsCallback(const nav_msgs::OdometryConstPtr &gps_msg);
 
         bool SaveKeyframeRadius(Pose6D &dtf);
 
@@ -215,6 +231,10 @@ private:
         std::mutex mtxPosegraph;
         std::mutex mtxICP;
         std::mutex mtxLoopCheck;
+        std::mutex mtxGpsInfo;
+
+        GeographicLib::LocalCartesian geo_converter;
+        PointT lastAcceptedGPSPoint;
         bool notified = false;
 
         Measurement measurement_curr;
@@ -277,6 +297,7 @@ private:
         std::mutex imuLock;
 
         std::vector<gtsam::GPSFactor> keyframeGPSfactor;
+        std::vector<int> keyframeGPSNodeIdx;
         bool gpsTransfromInit = false;
         Eigen::Vector3d gpsLLA;
         int prev_node_idx = 0, curr_node_idx = 0;

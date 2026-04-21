@@ -305,6 +305,8 @@ int method;
 int imuFactorType;
 double gpsFrequence;
 double gpsCovThreshold;
+double gpsDistance;
+bool useGpsElevation;
 double keyframeMeterGap;
 double keyframeDegGap;
 double keyframeRadGap;
@@ -404,6 +406,8 @@ void LoadRosParams(ros::NodeHandle &nh)
     nh.param<bool>("common/useGPS", useGPS, false);
     nh.param<double>("common/gpsFrequence", gpsFrequence, 10);
     nh.param<double>("common/gpsCovThreshold", gpsCovThreshold, 2.0);
+    nh.param<double>("common/gpsDistance", gpsDistance, 0.5);
+    nh.param<bool>("common/useGpsElevation", useGpsElevation, false);
     nh.param<int>("common/accumulatedFactorSize", accumulatedFactorSize, 10);
     nh.param<int>("common/GPS_SKIP_NUMBER", GPS_SKIP_NUMBER, 5.0);
     nh.param<vector<double>>("common/origin_lla", origin_lla, vector<double>(3));

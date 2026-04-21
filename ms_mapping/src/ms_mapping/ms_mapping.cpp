@@ -73,6 +73,11 @@ void MSMapping::pose_slam()
             t2_all += t2;
         }
 
+        if (useGPS)
+        {
+            AddGPSFactor();
+        }
+
         {
             // For baseline Map-to-Frame (M2F)
             // that means you trust the old session map more.
@@ -527,6 +532,145 @@ void MSMapping::AddMapPriorFactor()
         mapIndexContainer[curr_node_idx] = curr_node_idx;
         std::cout << BOLDGREEN <<"[INFO] Added global prior factor: " << curr_node_add_idx << std::endl;
     }
+}
+
+// Ported from LIO_SAM_6AXIS/src/mapOptmizationGps.cpp.
+// Pushes incoming ENU odometry into gpsQueue. `simple_gps_odom` packs the
+// original LLA into covariance[1..3] and variances into covariance[{0,7,14}].
+void MSMapping::GpsCallback(const nav_msgs::OdometryConstPtr &gps_msg)
+{
+    std::unique_lock<std::mutex> lock(mtxGpsInfo);
+    gpsQueue.push_back(*gps_msg);
+}
+
+// Temporal alignment of GPS to a lidar keyframe timestamp. Drops messages
+// older than `timestamp - eps`, returns the first one inside [t-eps, t+eps].
+bool MSMapping::SyncGPS(nav_msgs::Odometry &alignedGps, double timestamp, double eps)
+{
+    bool hasGPS = false;
+    while (true)
+    {
+        std::unique_lock<std::mutex> lock(mtxGpsInfo);
+        if (gpsQueue.empty())
+            break;
+        const double t = gpsQueue.front().header.stamp.toSec();
+        if (t < timestamp - eps)
+        {
+            gpsQueue.pop_front();
+            continue;
+        }
+        if (t > timestamp + eps)
+            break;
+        alignedGps = gpsQueue.front();
+        gpsQueue.pop_front();
+        hasGPS = true;
+        break;
+    }
+    return hasGPS;
+}
+
+// Ported from LIO_SAM_6AXIS mapOptmizationGps::addGPSFactor().
+// Behavior preserved: covariance rejection, useGpsElevation, spatial decimation,
+// cold-start accumulation of the first `accumulatedFactorSize` factors before
+// batch-inserting them into the graph.
+void MSMapping::AddGPSFactor()
+{
+    if (keyMeasures.empty() || oldMeasurements.empty())
+        return;
+    {
+        std::unique_lock<std::mutex> lock(mtxGpsInfo);
+        if (gpsQueue.empty())
+            return;
+    }
+
+    nav_msgs::Odometry thisGPS;
+    const double eps = 1.0 / std::max(gpsFrequence, 1.0);
+    if (!SyncGPS(thisGPS, measurement_curr.odom_time, eps))
+        return;
+
+    float noise_x = thisGPS.pose.covariance[0];
+    float noise_y = thisGPS.pose.covariance[7];
+    float noise_z = thisGPS.pose.covariance[14];
+
+    if (std::abs(noise_x) > gpsCovThreshold || std::abs(noise_y) > gpsCovThreshold)
+        return;
+
+    const Eigen::Vector3d LLA(thisGPS.pose.covariance[1],
+                              thisGPS.pose.covariance[2],
+                              thisGPS.pose.covariance[3]);
+
+    // Initialize the back-end converter from the first accepted keyframe's LLA,
+    // so that GPS factors and the LIO-anchored pose graph share the same origin.
+    // Note: gpsTransfromInit flips only after the warmup batch is inserted, so
+    // we gate the one-shot Reset on `keyframeGPSfactor.empty()`.
+    if (keyframeGPSfactor.empty())
+    {
+        geo_converter.Reset(LLA[0], LLA[1], LLA[2]);
+        gpsLLA = LLA;
+    }
+
+    double gps_x = 0.0, gps_y = 0.0, gps_z = 0.0;
+    geo_converter.Forward(LLA[0], LLA[1], LLA[2], gps_x, gps_y, gps_z);
+
+    if (!useGpsElevation)
+    {
+        gps_z = measurement_curr.updated_pose.z;
+        noise_z = 0.01f;
+    }
+
+    if (std::abs(gps_x) < 1e-6 && std::abs(gps_y) < 1e-6)
+        return;
+
+    PointT curGPSPoint;
+    curGPSPoint.x = gps_x;
+    curGPSPoint.y = gps_y;
+    curGPSPoint.z = gps_z;
+    if (!keyframeGPSfactor.empty() &&
+        pointDistance(curGPSPoint, lastAcceptedGPSPoint) < gpsDistance)
+        return;
+    lastAcceptedGPSPoint = curGPSPoint;
+    lastGPSPoint = curGPSPoint;
+
+    gtsam::Vector variances(3);
+    variances << noise_x, noise_y, noise_z;
+    auto gps_noise = gtsam::noiseModel::Diagonal::Variances(variances);
+    gtsam::GPSFactor gps_factor(X(curr_node_add_idx),
+                                gtsam::Point3(gps_x, gps_y, gps_z),
+                                gps_noise);
+
+    keyframeGPSfactor.push_back(gps_factor);
+    keyframeGPSNodeIdx.push_back(curr_node_add_idx);
+    Pose6D gpsPose{gps_x, gps_y, gps_z, 0.0, 0.0, 0.0};
+    keyframeGPS.push_back(gpsPose);
+
+    const int warmup = std::max(accumulatedFactorSize, 1);
+    if (static_cast<int>(keyframeGPSfactor.size()) < warmup)
+    {
+        ROS_INFO_THROTTLE(2.0, "[GPS] accumulated %zu/%d factors before graph insertion",
+                          keyframeGPSfactor.size(), warmup);
+        return;
+    }
+
+    std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
+    if (!gpsTransfromInit)
+    {
+        ROS_INFO("[GPS] batch-inserting %zu warmup factors", keyframeGPSfactor.size());
+        for (size_t i = 0; i < keyframeGPSfactor.size(); ++i)
+        {
+            oldGraph.add(keyframeGPSfactor[i]);
+            gpsIndexContainer[keyframeGPSNodeIdx[i]] = static_cast<int>(i);
+        }
+        gpsTransfromInit = true;
+    }
+    else
+    {
+        oldGraph.add(gps_factor);
+        gpsIndexContainer[curr_node_add_idx] =
+            static_cast<int>(keyframeGPSfactor.size()) - 1;
+    }
+    graph_guard.unlock();
+
+    aLoopIsClosed = true;
 }
 
 void MSMapping::AddNoMotionFactor()

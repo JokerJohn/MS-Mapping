@@ -61,6 +61,9 @@ find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GTSAM REQUIRED QUIET)
 
+# Vendored GeographicLib (ported from LIO_SAM_6AXIS) for LLA<->ENU conversion.
+add_subdirectory(third_parties/GeographicLib)
+
 ###########################################################################
 # Find Boost
 find_package(Boost REQUIRED COMPONENTS filesystem regex timer date_time program_options)
@@ -78,6 +81,7 @@ include_directories(
         include
         /usr/include/libxml2
         third_parties
+        third_parties/GeographicLib/include
         /usr/local/include/yaml-cpp
         ${catkin_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
@@ -103,7 +107,12 @@ add_executable(ms_mapping
         src/ms_mapping/ms_mapping.cpp
         src/ms_mapping/ms_mapping_node.cpp
         )
-target_link_libraries(ms_mapping ${catkin_LIBRARIES} ${Open3D_LIBRARIES} ${PCL_LIBRARIES} ${OpenMP_CXX_FLAGS} ${OpenCV_LIBS}  gtsam)
+target_link_libraries(ms_mapping ${catkin_LIBRARIES} ${Open3D_LIBRARIES} ${PCL_LIBRARIES} ${OpenMP_CXX_FLAGS} ${OpenCV_LIBS} gtsam libGeographic)
+
+add_executable(simple_gps_odom
+        src/gps/simple_gps_odom.cpp
+        )
+target_link_libraries(simple_gps_odom ${catkin_LIBRARIES} libGeographic)
 
 
 

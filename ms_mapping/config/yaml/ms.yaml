@@ -20,6 +20,18 @@ common:
   useImuFrame: false                        # when we use imu frame, we will get dense color cloud
   useLoopClosure: true                       # if we enable loop closure
 
+  # GNSS fusion (ported from LIO_SAM_6AXIS). Set useGPS=true and launch the
+  # simple_gps_odom node to convert NavSatFix->ENU on /gps_odom.
+  useGPS: false
+  gps_topic: "/gnss"
+  gpsFrequence: 10                          # Hz, used as +/- eps when syncing GPS to lidar keyframes
+  gpsCovThreshold: 2.0                      # m^2, reject GPS fix if x or y variance exceeds this
+  gpsDistance: 0.5                          # m, minimum spacing between accepted GPS factors
+  useGpsElevation: false                    # if false, replace GPS z with LIO z and use noise_z=0.01
+  accumulatedFactorSize: 10                 # buffer first N GPS factors before batch-inserting
+  GPS_SKIP_NUMBER: 5
+  origin_lla: [0.0, 0.0, 0.0]               # optional fixed origin; empty = use first fix
+
   # save data
   saveResultBodyFrame: true
   saveLoopdata: false                       # useless, just preparing for the new algo

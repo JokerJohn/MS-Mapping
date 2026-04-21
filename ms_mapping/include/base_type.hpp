@@ -505,6 +505,8 @@ extern bool useCompressedImage;
 
 extern double gpsFrequence;
 extern double gpsCovThreshold;
+extern double gpsDistance;
+extern bool useGpsElevation;
 extern double keyframeMeterGap;
 extern double keyframeDegGap;
 extern double keyframeRadGap;
