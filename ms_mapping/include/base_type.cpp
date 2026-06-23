@@ -376,6 +376,10 @@ vector<double> b_acc_cov_n;
 vector<double> extrinT;
 vector<double> extrinR;
 
+double map_origin_northing;
+double map_origin_easting;
+double map_origin_height;
+
 void LoadRosParams(ros::NodeHandle &nh)
 {
     t_body_sensor = Eigen::Vector3d::Identity();
@@ -478,4 +482,8 @@ void LoadRosParams(ros::NodeHandle &nh)
     nh.param<int>("pgo/historyKeyframeSearchNum", historyKeyframeSearchNum, 25);
     nh.param<double>("pgo/loopClosureFrequency", loopClosureFrequency, 5);
     nh.param<double>("pgo/loopFitnessScoreThreshold", loopFitnessScoreThreshold,  0.9);
+
+    nh.param<double>("common/Northing", map_origin_northing, 0.0);
+    nh.param<double>("common/Easting", map_origin_easting, 0.0);
+    nh.param<double>("common/ElipsoidHeight", map_origin_height, 0.0);
 }

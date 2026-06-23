@@ -60,6 +60,16 @@ find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GTSAM REQUIRED QUIET)
+find_package(GeographicLib REQUIRED)
+
+find_path(GeographicLib_INCLUDE_DIR GeographicLib/Config.h
+        PATH_SUFFIXES GeographicLib)
+set(GeographicLib_INCLUDE_DIRS ${GeographicLib_INCLUDE_DIR})
+
+find_library(GeographicLib_LIBRARIES
+        NAMES Geographic)
+
+add_definitions(${GeographicLib_DEFINITIONS})
 
 ###########################################################################
 # Find Boost
@@ -87,6 +97,7 @@ include_directories(
         ${YAML_CPP_INCLUDE_DIR}
         ${PYTHON_INCLUDE_DIRS}
         ${Open3D_INCLUDE_DIRS}
+        ${GeographicLib_INCLUDE_DIRS}
 )
 # link_libraries(-lxml2 yaml-cpp)
 
@@ -102,8 +113,9 @@ add_executable(ms_mapping
         src/cloud_process.cpp
         src/ms_mapping/ms_mapping.cpp
         src/ms_mapping/ms_mapping_node.cpp
+        src/ms_mapping/utm_to_mgrs_converter.cpp
         )
-target_link_libraries(ms_mapping ${catkin_LIBRARIES} ${Open3D_LIBRARIES} ${PCL_LIBRARIES} ${OpenMP_CXX_FLAGS} ${OpenCV_LIBS}  gtsam)
+target_link_libraries(ms_mapping ${catkin_LIBRARIES} ${Open3D_LIBRARIES} ${PCL_LIBRARIES} ${OpenMP_CXX_FLAGS} ${OpenCV_LIBS}  gtsam ${GeographicLib_LIBRARIES})
 
 
 

@@ -1152,6 +1152,21 @@ bool MSMapping::SaveMap(std_srvs::Empty::Request &req,
     return true;
 }
 
+bool MSMapping::ConvertMGRS(std_srvs::Empty::Request &req,
+                            std_srvs::Empty::Response &res)
+{
+    ROS_INFO("CONVERTING PCD TO MGRS...");
+    std::string input_pcd = saveDirectory + sequence + "/final_map_lidar.pcd";
+    std::string output_pcd = saveDirectory + sequence + "/final_map_lidar_mgrs.pcd";
+    bool success = convertPCDToMGRS(input_pcd, output_pcd, map_origin_northing, map_origin_easting, map_origin_height);
+    if (!success) {
+        ROS_ERROR("MGRS Conversion failed!");
+    } else {
+        ROS_INFO("MGRS Conversion successful.");
+    }
+    return true;
+}
+
 void MSMapping::PerformRSLoopClosure(void)
 {
     const int minKeyFrames = 1;

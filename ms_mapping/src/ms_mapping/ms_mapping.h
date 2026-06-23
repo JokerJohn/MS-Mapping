@@ -3,6 +3,7 @@
 
 #include "../cloud_process.h"
 #include "../data_saver.h"
+#include "utm_to_mgrs_converter.h"
 
 using namespace gtsam;
 using namespace open3d;
@@ -14,6 +15,7 @@ public:
         {
                 LoadRosParams(nh);
                 srvSaveMap = nh.advertiseService("/save_map", &MSMapping::SaveMap, this);
+                srvConvertMGRS = nh.advertiseService("/convert_mgrs", &MSMapping::ConvertMGRS, this);
                 pubLaserCloudSurround =  nh.advertise<sensor_msgs::PointCloud2>("/current_cloud", 10);
                 pubLaserCloudCrop =  nh.advertise<sensor_msgs::PointCloud2>("/crop_cloud", 10);
                 pubOdomAftPGO = nh.advertise<nav_msgs::Odometry>("/pgo_odom", 100);
@@ -129,6 +131,8 @@ private:
 
         bool SaveMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
+        bool ConvertMGRS(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
         void LidarCallback(const sensor_msgs::PointCloud2ConstPtr &pc_msg_ptr);
 
         void OdometryCallback(const nav_msgs::OdometryConstPtr &odom_msg_ptr);
@@ -208,6 +212,7 @@ private:
         ros::Publisher pubColorclouds, pubSemanticClouds;
 
         ros::ServiceServer srvSaveMap;
+        ros::ServiceServer srvConvertMGRS;
 
         std::mutex mKF;
         std::mutex mutexLock;

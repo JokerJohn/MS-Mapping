@@ -624,6 +624,10 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc(
 pcl::PointCloud<pcl::PointXYZ>::Ptr vector2pc2d(
         const std::vector<Pose6D> vectorPose6d);
 
+extern double map_origin_northing;
+extern double map_origin_easting;
+extern double map_origin_height;
+
 void LoadRosParams(ros::NodeHandle &nh);
 
 template<typename T>
