@@ -125,6 +125,23 @@ private:
 
         void AddGPSFactor();
 
+        // Fits a 2D rigid transform (yaw + translation) that maps GPS ENU
+        // coordinates into the FAST-LIO map frame, using the warm-up batch.
+        void EstimateGpsAlignment();
+
+        // Applies the fitted ENU->map transform to a single ENU point.
+        Eigen::Vector3d ToMapFrame(const Eigen::Vector3d &enu) const;
+
+        // Builds and inserts one GPS factor (lever-arm + robust noise aware)
+        // into oldGraph and records it for visualization. R_wb is the node's
+        // rotation (map frame) used for the antenna lever-arm correction.
+        // Caller holds mtxPosegraph.
+        void InsertGpsFactor(int nodeIdx, const Eigen::Vector3d &pMap,
+                             const Eigen::Vector3d &var, const Eigen::Matrix3d &R_wb);
+
+        // Persists the ENU origin LLA to saveDirectory/origin.txt for reuse.
+        void SaveOriginToFile(const Eigen::Vector3d &lla);
+
         bool SyncGPS(nav_msgs::Odometry &alignedGps, double timestamp, double eps);
 
         void GpsCallback(const nav_msgs::OdometryConstPtr &gps_msg);
@@ -247,7 +264,6 @@ private:
         std::vector<Pose6D> keyframeGPS;
         Eigen::Isometry3d initialMatrix = Eigen::Isometry3d::Identity();
 
-        bool useGpsElevation = true;
         bool isInitialized = false;
         bool poseReceived = false;
         Eigen::Vector3d init_gravity = Eigen::Vector3d::Zero();
@@ -296,10 +312,24 @@ private:
 
         std::mutex imuLock;
 
-        std::vector<gtsam::GPSFactor> keyframeGPSfactor;
         std::vector<int> keyframeGPSNodeIdx;
         bool gpsTransfromInit = false;
         Eigen::Vector3d gpsLLA;
+
+        // --- GNSS fusion state ---
+        bool gpsOriginSet = false;            // ENU origin fixed exactly once
+        bool gpsHasLast = false;              // lastAcceptedGPSPoint is valid
+        double gpsAccumDist = 0.0;            // ENU travel accumulated during warm-up
+        double gpsYaw = 0.0;                  // fitted ENU->map yaw (rad)
+        Eigen::Vector3d gpsTrans = Eigen::Vector3d::Zero();  // fitted ENU->map translation
+        bool gpsAlignValid = false;           // alignment has been estimated
+        const double gpsVarianceFloor = 1e-4; // m^2, GTSAM rejects zero-variance fixes
+        // Warm-up batch buffers (ENU point, node map pose, variance, node index).
+        std::vector<Eigen::Vector3d> gpsEnuBuf;
+        std::vector<Eigen::Vector3d> gpsNodeMapBuf;
+        std::vector<Eigen::Vector3d> gpsVarBuf;
+        std::vector<Eigen::Matrix3d> gpsNodeRotBuf;
+        std::vector<int> gpsNodeIdxBuf;
         int prev_node_idx = 0, curr_node_idx = 0;
         int prev_node_add_idx = 0, curr_node_add_idx = 0;
         const int node_rate = 1; // 10s jifenyici

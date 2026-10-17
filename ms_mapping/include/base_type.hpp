@@ -507,6 +507,9 @@ extern double gpsFrequence;
 extern double gpsCovThreshold;
 extern double gpsDistance;
 extern bool useGpsElevation;
+extern double gpsAlignDistance;          // m of travel before fitting the ENU->map transform
+extern bool gpsUseRobust;                // wrap GPS factors in a robust (Huber) noise model
+extern vector<double> gps_extrinsic_T;   // GPS antenna position in the body/IMU frame (lever arm)
 extern double keyframeMeterGap;
 extern double keyframeDegGap;
 extern double keyframeRadGap;
