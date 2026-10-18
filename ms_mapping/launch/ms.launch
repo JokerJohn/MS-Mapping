@@ -9,12 +9,17 @@
 
     <arg name="sequence" default="PK1-RB2-TEST"/>
 
+    <!-- Enable GNSS fusion: launches simple_gps_odom. The ms_mapping node also
+         reads common/useGPS from the yaml to gate its own GPS subscription. -->
+    <arg name="useGPS" default="false"/>
+
     <!-- set your mapping params-->
     <rosparam file="$(find ms_mapping)/config/yaml/ms.yaml" command="load"/>
     <rosparam param="common/sequence" subst_value="true">$(arg sequence)</rosparam>
 
     <node pkg="ms_mapping" type="fastlio" name="fastlio" output="log" required="true"/>
     <node pkg="ms_mapping" type="ms_mapping" name="ms_mapping" output="screen" required="true"/>
+    <node if="$(arg useGPS)" pkg="ms_mapping" type="simple_gps_odom" name="simple_gps_odom" output="screen"/>
 
     <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz_pgo"
           args="-d $(find ms_mapping)/config/rviz/ouster_indoors.rviz"/>

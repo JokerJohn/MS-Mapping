@@ -73,6 +73,11 @@ void MSMapping::pose_slam()
             t2_all += t2;
         }
 
+        if (useGPS)
+        {
+            AddGPSFactor();
+        }
+
         {
             // For baseline Map-to-Frame (M2F)
             // that means you trust the old session map more.
@@ -529,6 +534,294 @@ void MSMapping::AddMapPriorFactor()
     }
 }
 
+// Ported from LIO_SAM_6AXIS/src/mapOptmizationGps.cpp.
+// Pushes incoming ENU odometry into gpsQueue. `simple_gps_odom` packs the
+// original LLA into covariance[1..3] and variances into covariance[{0,7,14}].
+void MSMapping::GpsCallback(const nav_msgs::OdometryConstPtr &gps_msg)
+{
+    std::unique_lock<std::mutex> lock(mtxGpsInfo);
+    gpsQueue.push_back(*gps_msg);
+}
+
+// Temporal alignment of GPS to a lidar keyframe timestamp. Drops messages
+// older than `timestamp - eps`, returns the first one inside [t-eps, t+eps].
+bool MSMapping::SyncGPS(nav_msgs::Odometry &alignedGps, double timestamp, double eps)
+{
+    bool hasGPS = false;
+    while (true)
+    {
+        std::unique_lock<std::mutex> lock(mtxGpsInfo);
+        if (gpsQueue.empty())
+            break;
+        const double t = gpsQueue.front().header.stamp.toSec();
+        if (t < timestamp - eps)
+        {
+            gpsQueue.pop_front();
+            continue;
+        }
+        if (t > timestamp + eps)
+            break;
+        alignedGps = gpsQueue.front();
+        gpsQueue.pop_front();
+        hasGPS = true;
+        break;
+    }
+    return hasGPS;
+}
+
+// Persists the ENU origin so later sessions can reuse it via common/origin_lla.
+void MSMapping::SaveOriginToFile(const Eigen::Vector3d &lla)
+{
+    const std::string path = saveDirectory + "/origin.txt";
+    std::ofstream ofs(path);
+    if (!ofs.is_open())
+    {
+        ROS_WARN("[GPS] could not write origin to %s", path.c_str());
+        return;
+    }
+    ofs << std::setprecision(12) << lla[0] << " " << lla[1] << " " << lla[2] << std::endl;
+    ROS_INFO("[GPS] origin LLA saved to %s", path.c_str());
+}
+
+// Closed-form 2D rigid fit (Umeyama/Horn, yaw + translation) mapping the
+// warm-up ENU points onto the FAST-LIO map-frame node poses. z is treated as a
+// pure offset since the current solve assumes a level map frame.
+void MSMapping::EstimateGpsAlignment()
+{
+    const size_t n = gpsEnuBuf.size();
+    if (n < 2)
+    {
+        gpsYaw = 0.0;
+        gpsTrans = Eigen::Vector3d::Zero();
+        gpsAlignValid = true;
+        ROS_WARN("[GPS] alignment skipped: only %zu warm-up points, using identity", n);
+        return;
+    }
+
+    // Inverse-variance weights so a noisy fix does not get equal leverage to a
+    // high-quality (e.g. RTK-fixed) one in the fit.
+    std::vector<double> w(n);
+    double wsum = 0.0;
+    for (size_t i = 0; i < n; ++i)
+    {
+        const double vxy = std::max(gpsVarBuf[i].x(), gpsVarianceFloor) +
+                           std::max(gpsVarBuf[i].y(), gpsVarianceFloor);
+        w[i] = 1.0 / vxy;
+        wsum += w[i];
+    }
+
+    Eigen::Vector3d ca = Eigen::Vector3d::Zero(), cb = Eigen::Vector3d::Zero();
+    for (size_t i = 0; i < n; ++i)
+    {
+        ca += w[i] * gpsEnuBuf[i];
+        cb += w[i] * gpsNodeMapBuf[i];
+    }
+    ca /= wsum;
+    cb /= wsum;
+
+    double Sxx = 0.0, Sxy = 0.0;
+    for (size_t i = 0; i < n; ++i)
+    {
+        const Eigen::Vector3d a = gpsEnuBuf[i] - ca;
+        const Eigen::Vector3d b = gpsNodeMapBuf[i] - cb;
+        Sxx += w[i] * (a.x() * b.x() + a.y() * b.y());
+        Sxy += w[i] * (a.x() * b.y() - a.y() * b.x());
+    }
+    gpsYaw = std::atan2(Sxy, Sxx);
+
+    const double c = std::cos(gpsYaw), s = std::sin(gpsYaw);
+    gpsTrans.x() = cb.x() - (c * ca.x() - s * ca.y());
+    gpsTrans.y() = cb.y() - (s * ca.x() + c * ca.y());
+    gpsTrans.z() = cb.z() - ca.z();
+    gpsAlignValid = true;
+
+    double se = 0.0;
+    for (size_t i = 0; i < n; ++i)
+        se += (ToMapFrame(gpsEnuBuf[i]) - gpsNodeMapBuf[i]).squaredNorm();
+    const double rmse = std::sqrt(se / static_cast<double>(n));
+
+    ROS_INFO("[GPS] ENU->map aligned: yaw=%.2f deg, t=(%.2f, %.2f, %.2f), xy rmse=%.3f m (n=%zu)",
+             gpsYaw * 180.0 / M_PI, gpsTrans.x(), gpsTrans.y(), gpsTrans.z(), rmse, n);
+}
+
+Eigen::Vector3d MSMapping::ToMapFrame(const Eigen::Vector3d &enu) const
+{
+    const double c = std::cos(gpsYaw), s = std::sin(gpsYaw);
+    return Eigen::Vector3d(c * enu.x() - s * enu.y() + gpsTrans.x(),
+                           s * enu.x() + c * enu.y() + gpsTrans.y(),
+                           enu.z() + gpsTrans.z());
+}
+
+// Caller must hold mtxPosegraph.
+void MSMapping::InsertGpsFactor(int nodeIdx, const Eigen::Vector3d &pMap,
+                                const Eigen::Vector3d &var, const Eigen::Matrix3d &R_wb)
+{
+    // The measurement was rotated into the map frame by the alignment yaw, so
+    // rotate its (diagonal ENU) covariance the same way: Sigma_map = R Sigma R^T.
+    // Otherwise a nonzero yaw weights residuals along the wrong axes.
+    const Eigen::Vector3d v = var.cwiseMax(gpsVarianceFloor);
+    const double c = std::cos(gpsYaw), s = std::sin(gpsYaw);
+    Eigen::Matrix3d R = Eigen::Matrix3d::Identity();
+    R(0, 0) = c; R(0, 1) = -s;
+    R(1, 0) = s; R(1, 1) = c;
+    const Eigen::Matrix3d covMap = R * v.asDiagonal() * R.transpose();
+    gtsam::noiseModel::Gaussian::shared_ptr base =
+        gtsam::noiseModel::Gaussian::Covariance(covMap);
+    gtsam::SharedNoiseModel noise = base;
+    if (gpsUseRobust)
+        noise = gtsam::noiseModel::Robust::Create(
+            gtsam::noiseModel::mEstimator::Huber::Create(1.345), base);
+
+    // GPS measures the antenna, but the pose variable X(nodeIdx) is the body/IMU
+    // origin. This GTSAM build has no GPSFactorArm, so correct the measurement to
+    // the body origin using the node's current rotation estimate:
+    //   body_origin = antenna - R_wb * arm   (all in the map frame).
+    Eigen::Vector3d meas = pMap;
+    if (gps_extrinsic_T.size() == 3)
+    {
+        const Eigen::Vector3d arm(gps_extrinsic_T[0], gps_extrinsic_T[1], gps_extrinsic_T[2]);
+        if (arm.norm() > 1e-9)
+            meas -= R_wb * arm;
+    }
+
+    oldGraph.add(gtsam::GPSFactor(X(nodeIdx),
+                                  gtsam::Point3(meas.x(), meas.y(), meas.z()), noise));
+
+    const int seq = static_cast<int>(keyframeGPS.size());
+    keyframeGPS.push_back(Pose6D{meas.x(), meas.y(), meas.z(), 0.0, 0.0, 0.0});
+    keyframeGPSNodeIdx.push_back(nodeIdx);
+    gpsIndexContainer[nodeIdx] = seq;
+}
+
+// Ported from LIO_SAM_6AXIS mapOptmizationGps::addGPSFactor(), then fixed:
+//  - the ENU origin is now fixed exactly once (was reset per-fix -> every fix
+//    converted to ~(0,0) and was discarded, so 0 factors ever reached the graph);
+//  - GPS ENU is aligned to the (arbitrary-heading) FAST-LIO map frame before
+//    building factors;
+//  - NO_FIX rejection, a variance floor, lever arm and a robust noise model.
+void MSMapping::AddGPSFactor()
+{
+    if (keyMeasures.empty() || oldMeasurements.empty())
+        return;
+    {
+        std::unique_lock<std::mutex> lock(mtxGpsInfo);
+        if (gpsQueue.empty())
+            return;
+    }
+
+    nav_msgs::Odometry thisGPS;
+    const double eps = 1.0 / std::max(gpsFrequence, 1.0);
+    if (!SyncGPS(thisGPS, measurement_curr.odom_time, eps))
+        return;
+
+    // Fix quality: simple_gps_odom packs NavSatStatus.status into covariance[4].
+    // STATUS_NO_FIX == -1; reject anything with no fix.
+    const int fixStatus = static_cast<int>(std::lround(thisGPS.pose.covariance[4]));
+    if (fixStatus < 0)
+        return;
+
+    float noise_x = thisGPS.pose.covariance[0];
+    float noise_y = thisGPS.pose.covariance[7];
+    float noise_z = thisGPS.pose.covariance[14];
+
+    if (std::abs(noise_x) > gpsCovThreshold || std::abs(noise_y) > gpsCovThreshold)
+        return;
+
+    const Eigen::Vector3d LLA(thisGPS.pose.covariance[1],
+                              thisGPS.pose.covariance[2],
+                              thisGPS.pose.covariance[3]);
+
+    // Fix the ENU origin exactly once: prefer a configured common/origin_lla
+    // (lets multiple sessions share a frame), otherwise the first accepted fix.
+    if (!gpsOriginSet)
+    {
+        Eigen::Vector3d origin = LLA;
+        if (origin_lla.size() == 3 &&
+            (std::abs(origin_lla[0]) > 1e-9 || std::abs(origin_lla[1]) > 1e-9))
+            origin = Eigen::Vector3d(origin_lla[0], origin_lla[1], origin_lla[2]);
+        geo_converter.Reset(origin[0], origin[1], origin[2]);
+        gpsLLA = origin;
+        gpsOriginSet = true;
+        SaveOriginToFile(origin);
+        ROS_INFO("[GPS] ENU origin set to LLA (%.8f, %.8f, %.3f)",
+                 origin[0], origin[1], origin[2]);
+    }
+
+    double ex = 0.0, ey = 0.0, ez = 0.0;
+    geo_converter.Forward(LLA[0], LLA[1], LLA[2], ex, ey, ez);
+    Eigen::Vector3d enu(ex, ey, ez);
+
+    // Node pose in the pose-graph frame at this keyframe. Use predict_pose (set
+    // in AddOdomFactorToOldGraph just before this call) rather than the raw
+    // FAST-LIO updated_pose: in multi-session mode X(idx) lives in the global
+    // graph frame, offset from the LIO frame by the initialization transform,
+    // and predict_pose is already in that graph frame (identity init in single
+    // session, so no change there).
+    const Eigen::Vector3d nodeMap(predict_pose.translation().x(),
+                                  predict_pose.translation().y(),
+                                  predict_pose.translation().z());
+
+    if (!useGpsElevation)
+    {
+        enu.z() = nodeMap.z(); // trust LIO height; z offset absorbed by alignment
+        noise_z = 0.01f;
+    }
+
+    // Spatial decimation (ENU metric; unaffected by the yaw-only alignment).
+    PointT curGPSPoint;
+    curGPSPoint.x = enu.x();
+    curGPSPoint.y = enu.y();
+    curGPSPoint.z = enu.z();
+    if (gpsHasLast && pointDistance(curGPSPoint, lastAcceptedGPSPoint) < gpsDistance)
+        return;
+    if (gpsHasLast)
+        gpsAccumDist += pointDistance(curGPSPoint, lastAcceptedGPSPoint);
+    lastAcceptedGPSPoint = curGPSPoint;
+    lastGPSPoint = curGPSPoint;
+    gpsHasLast = true;
+
+    const Eigen::Vector3d var(noise_x, noise_y, noise_z);
+    // Node rotation in the graph frame, for the antenna lever-arm correction
+    // (same graph-frame reasoning as nodeMap above).
+    const Eigen::Matrix3d R_wb = predict_pose.rotation().matrix();
+
+    std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
+    if (!gpsTransfromInit)
+    {
+        // Accumulate the warm-up batch; alignment needs a travel baseline.
+        gpsEnuBuf.push_back(enu);
+        gpsNodeMapBuf.push_back(nodeMap);
+        gpsVarBuf.push_back(var);
+        gpsNodeRotBuf.push_back(R_wb);
+        gpsNodeIdxBuf.push_back(curr_node_add_idx);
+
+        const int warmup = std::max(accumulatedFactorSize, 1);
+        const bool enoughCount = static_cast<int>(gpsEnuBuf.size()) >= warmup;
+        const bool enoughTravel = gpsAccumDist >= gpsAlignDistance;
+        if (!enoughCount || !enoughTravel)
+        {
+            ROS_INFO_THROTTLE(2.0,
+                              "[GPS] warm-up %zu/%d factors, %.1f/%.1f m travelled",
+                              gpsEnuBuf.size(), warmup, gpsAccumDist, gpsAlignDistance);
+            return;
+        }
+
+        EstimateGpsAlignment();
+        ROS_INFO("[GPS] batch-inserting %zu warmup factors", gpsEnuBuf.size());
+        for (size_t i = 0; i < gpsEnuBuf.size(); ++i)
+            InsertGpsFactor(gpsNodeIdxBuf[i], ToMapFrame(gpsEnuBuf[i]),
+                            gpsVarBuf[i], gpsNodeRotBuf[i]);
+        gpsTransfromInit = true;
+    }
+    else
+    {
+        InsertGpsFactor(curr_node_add_idx, ToMapFrame(enu), var, R_wb);
+    }
+    graph_guard.unlock();
+
+    aLoopIsClosed = true;
+}
+
 void MSMapping::AddNoMotionFactor()
 {
     if (curr_node_idx < 1)
@@ -962,6 +1255,14 @@ void MSMapping::VisualizationThread()
         if (useLoopClosure)
         {
             VisualizeLoopConstrains(loopIndexCheckedMap, pubLoopConstraintEdge, 0);
+        }
+        if (useGPS)
+        {
+            // Hold mtxPosegraph: AddGPSFactor writes gpsIndexContainer and
+            // keyframeGPS under this lock, and the visualizer reads both (the
+            // by-value copy of gpsIndexContainer and keyframeGPS.at(...) inside).
+            std::unique_lock<std::mutex> gps_guard(mtxPosegraph);
+            VisualizeLoopConstrains(gpsIndexContainer, pubGpsConstraintEdge, -1);
         }
     }
 }
@@ -1456,7 +1757,7 @@ void MSMapping::VisualizeLoopConstrains(std::map<int, int> loopMap,
             p.y = keyframeGPS.at(key_pre).y;
             p.z = keyframeGPS.at(key_pre).z;
         }
-        if (type == -2)
+        else if (type == -2)
         {
             p.x = oldMeasurements.at(key_pre).global_pose.x;
             p.y = oldMeasurements.at(key_pre).global_pose.y;
