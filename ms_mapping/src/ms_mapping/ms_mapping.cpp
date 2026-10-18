@@ -598,22 +598,34 @@ void MSMapping::EstimateGpsAlignment()
         return;
     }
 
+    // Inverse-variance weights so a noisy fix does not get equal leverage to a
+    // high-quality (e.g. RTK-fixed) one in the fit.
+    std::vector<double> w(n);
+    double wsum = 0.0;
+    for (size_t i = 0; i < n; ++i)
+    {
+        const double vxy = std::max(gpsVarBuf[i].x(), gpsVarianceFloor) +
+                           std::max(gpsVarBuf[i].y(), gpsVarianceFloor);
+        w[i] = 1.0 / vxy;
+        wsum += w[i];
+    }
+
     Eigen::Vector3d ca = Eigen::Vector3d::Zero(), cb = Eigen::Vector3d::Zero();
     for (size_t i = 0; i < n; ++i)
     {
-        ca += gpsEnuBuf[i];
-        cb += gpsNodeMapBuf[i];
+        ca += w[i] * gpsEnuBuf[i];
+        cb += w[i] * gpsNodeMapBuf[i];
     }
-    ca /= static_cast<double>(n);
-    cb /= static_cast<double>(n);
+    ca /= wsum;
+    cb /= wsum;
 
     double Sxx = 0.0, Sxy = 0.0;
     for (size_t i = 0; i < n; ++i)
     {
         const Eigen::Vector3d a = gpsEnuBuf[i] - ca;
         const Eigen::Vector3d b = gpsNodeMapBuf[i] - cb;
-        Sxx += a.x() * b.x() + a.y() * b.y();
-        Sxy += a.x() * b.y() - a.y() * b.x();
+        Sxx += w[i] * (a.x() * b.x() + a.y() * b.y());
+        Sxy += w[i] * (a.x() * b.y() - a.y() * b.x());
     }
     gpsYaw = std::atan2(Sxy, Sxx);
 
@@ -644,9 +656,17 @@ Eigen::Vector3d MSMapping::ToMapFrame(const Eigen::Vector3d &enu) const
 void MSMapping::InsertGpsFactor(int nodeIdx, const Eigen::Vector3d &pMap,
                                 const Eigen::Vector3d &var, const Eigen::Matrix3d &R_wb)
 {
-    gtsam::Vector3 v = var.cwiseMax(gpsVarianceFloor);
-    gtsam::noiseModel::Diagonal::shared_ptr base =
-        gtsam::noiseModel::Diagonal::Variances(v);
+    // The measurement was rotated into the map frame by the alignment yaw, so
+    // rotate its (diagonal ENU) covariance the same way: Sigma_map = R Sigma R^T.
+    // Otherwise a nonzero yaw weights residuals along the wrong axes.
+    const Eigen::Vector3d v = var.cwiseMax(gpsVarianceFloor);
+    const double c = std::cos(gpsYaw), s = std::sin(gpsYaw);
+    Eigen::Matrix3d R = Eigen::Matrix3d::Identity();
+    R(0, 0) = c; R(0, 1) = -s;
+    R(1, 0) = s; R(1, 1) = c;
+    const Eigen::Matrix3d covMap = R * v.asDiagonal() * R.transpose();
+    gtsam::noiseModel::Gaussian::shared_ptr base =
+        gtsam::noiseModel::Gaussian::Covariance(covMap);
     gtsam::SharedNoiseModel noise = base;
     if (gpsUseRobust)
         noise = gtsam::noiseModel::Robust::Create(
@@ -731,10 +751,15 @@ void MSMapping::AddGPSFactor()
     geo_converter.Forward(LLA[0], LLA[1], LLA[2], ex, ey, ez);
     Eigen::Vector3d enu(ex, ey, ez);
 
-    // Node pose in the FAST-LIO map frame at this keyframe.
-    const Eigen::Vector3d nodeMap(measurement_curr.updated_pose.x,
-                                  measurement_curr.updated_pose.y,
-                                  measurement_curr.updated_pose.z);
+    // Node pose in the pose-graph frame at this keyframe. Use predict_pose (set
+    // in AddOdomFactorToOldGraph just before this call) rather than the raw
+    // FAST-LIO updated_pose: in multi-session mode X(idx) lives in the global
+    // graph frame, offset from the LIO frame by the initialization transform,
+    // and predict_pose is already in that graph frame (identity init in single
+    // session, so no change there).
+    const Eigen::Vector3d nodeMap(predict_pose.translation().x(),
+                                  predict_pose.translation().y(),
+                                  predict_pose.translation().z());
 
     if (!useGpsElevation)
     {
@@ -756,9 +781,9 @@ void MSMapping::AddGPSFactor()
     gpsHasLast = true;
 
     const Eigen::Vector3d var(noise_x, noise_y, noise_z);
-    // Node rotation in the map frame, for the antenna lever-arm correction.
-    const Eigen::Matrix3d R_wb =
-        Pose6dTogtsamPose3(measurement_curr.updated_pose).rotation().matrix();
+    // Node rotation in the graph frame, for the antenna lever-arm correction
+    // (same graph-frame reasoning as nodeMap above).
+    const Eigen::Matrix3d R_wb = predict_pose.rotation().matrix();
 
     std::unique_lock<std::mutex> graph_guard(mtxPosegraph);
     if (!gpsTransfromInit)
@@ -1233,6 +1258,10 @@ void MSMapping::VisualizationThread()
         }
         if (useGPS)
         {
+            // Hold mtxPosegraph: AddGPSFactor writes gpsIndexContainer and
+            // keyframeGPS under this lock, and the visualizer reads both (the
+            // by-value copy of gpsIndexContainer and keyframeGPS.at(...) inside).
+            std::unique_lock<std::mutex> gps_guard(mtxPosegraph);
             VisualizeLoopConstrains(gpsIndexContainer, pubGpsConstraintEdge, -1);
         }
     }

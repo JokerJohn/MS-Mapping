@@ -41,6 +41,16 @@ private:
         if (std::isnan(msg->latitude + msg->longitude + msg->altitude)) {
             return;
         }
+        // Reject fixes whose covariance is unusable: an UNKNOWN covariance type,
+        // or non-positive x/y variance. Forwarding these lets the backend floor
+        // them to a tiny value, producing overconfident GPS constraints that
+        // corrupt the pose graph.
+        if (msg->position_covariance_type == sensor_msgs::NavSatFix::COVARIANCE_TYPE_UNKNOWN ||
+            msg->position_covariance[0] <= 0.0 || msg->position_covariance[4] <= 0.0) {
+            ROS_WARN_THROTTLE(5.0,
+                "[simple_gps_odom] dropping fix: unknown or non-positive position covariance");
+            return;
+        }
         const Eigen::Vector3d lla(msg->latitude, msg->longitude, msg->altitude);
 
         if (!initENU) {
